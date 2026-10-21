@@ -1,0 +1,21 @@
+version: 3
+# Content scanning is OBSERVABILITY ONLY — findings are logged and stored on
+# the document row, but never quarantine or block an upload. Employees own
+# what they upload and manage documents through the frontend; the system's
+# job is accurate cited answers from whatever was uploaded.
+# (v2 severity/category gates quarantined every real vendor manual on first
+# upload — see src/spark/ingestion/trust/gate.py for the full rationale.)
+rules:
+  secrets_scan: true
+  post_chunk_scan: true
+  injection_patterns:
+    - "(?i)ignore (all )?(previous|prior) instructions"
+    - "(?i)disregard (safety|lockout)"
+    - "(?i)system prompt override"
+    - "(?i)you are now (in )?developer mode"
+  safety_critical_phrases:
+    - "(?i)skip loto"
+    - "(?i)bypass interlock"
+    - "(?i)disable safety"
+    - "(?i)override emergency stop"
+    - "(?i)run without guard"

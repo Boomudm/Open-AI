@@ -1,0 +1,25 @@
+document_type: near_miss
+document_category: inspection
+parser: word
+default_route: qdrant
+
+required_metadata: [language]
+optional_metadata: [machine_id, severity, incident_date, status]
+
+chunking:
+  profile: short_form_th
+  chunk_size: 700
+  chunk_overlap: 100
+
+embedding:
+  profile: default_th
+
+qdrant:
+  collection: spark_docs
+
+postgres:
+  registry_only: true
+
+dedup:
+  by: file_hash_sha256
+  strategy: skip_if_exists

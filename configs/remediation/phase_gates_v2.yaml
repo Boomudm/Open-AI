@@ -1,0 +1,170 @@
+# Remediation blueprint v2 phase gates — used by scripts/remediation_v2_phase_gate.py
+
+phases:
+  "0":
+    description: Constitution v2 — production lock, degradation contract, import spine stub
+    contract_tests: true
+    pytest:
+      - tests/test_production_lock_v2.py
+      - tests/contracts/test_import_spine_v2.py
+
+  "1":
+    description: Truth layer — embed lineage, metrics honesty
+    contract_tests: true
+    pytest:
+      - tests/test_embed_lineage_runtime.py
+      - tests/test_embed_lineage.py
+      - tests/test_metrics_semantics_v2.py
+      - tests/contracts/test_config_schema_coverage.py
+
+  "2":
+    description: Ingest concurrency and idempotency — doc locks, job keys, dedup generation scope
+    contract_tests: true
+    pytest:
+      - tests/test_ingest_doc_lock.py
+      - tests/test_ingest_idempotency.py
+      - tests/test_dedup_generation_scope.py
+      - tests/test_ingest_error_classification.py
+
+  "3":
+    description: Streaming ingest pipeline — bounded batches, resource budgets, async OCR
+    contract_tests: true
+    pytest:
+      - tests/test_streaming_ingest_memory.py
+      - tests/test_ingest_budget_exceeded.py
+
+  "4":
+    description: Index saga consistency — bidirectional verify, purge outbox, generation-scoped structured data
+    contract_tests: true
+    pytest:
+      - tests/test_swap_verify_bidirectional.py
+      - tests/test_ingest_saga_abort.py
+      - tests/test_purge_outbox_retry.py
+      - tests/test_structured_generation_scope.py
+      - tests/test_ingest_quality_slos.py
+
+  "5":
+    description: Sparse & hybrid rewrite — real sparse encoder, single app fusion, sparse_encoder_id lineage
+    contract_tests: true
+    pytest:
+      - tests/test_sparse_encoder_bge_m3.py
+      - tests/test_single_fusion_point.py
+      - tests/test_sparse_hybrid_phase5.py
+      - tests/contracts/test_vector_consistency_contract.py
+
+  "6":
+    description: Parse & chunk consolidation — single chunker per strategy, layout blocks, table warnings
+    contract_tests: true
+    pytest:
+      - tests/test_chunk_registry_single_impl.py
+      - tests/test_pdf_table_extract_visibility.py
+      - tests/test_manual_chunk_golden.py
+      - tests/test_parse_chunk_quality.py
+      - tests/test_chunking_strategy.py
+
+  "7":
+    description: Trust boundary v2 and content quality SLOs — per-record scan, secrets, fail-closed finalize
+    contract_tests: true
+    pytest:
+      - tests/test_trust_per_record.py
+      - tests/test_ingest_slo_fail_closed.py
+      - tests/test_secrets_quarantine.py
+      - tests/test_ingest_quality_slos.py
+
+  "8":
+    description: Retrieval engine hardening — mandatory factory_id, global shard RRF, embed circuit, degradation API
+    contract_tests: true
+    pytest:
+      - tests/test_factory_id_required.py
+      - tests/test_multi_shard_rrf.py
+      - tests/test_embed_error_circuit.py
+      - tests/test_qdrant_failure_logged.py
+      - tests/test_qdrant_strategy.py
+
+  "9":
+    description: Intent routing and fusion calibration — YAML weights, document_type filter/boost, LTR feature logging
+    contract_tests: true
+    pytest:
+      - tests/test_intent_document_type_filter.py
+      - tests/test_intent_weights_loaded_from_yaml.py
+      - tests/test_intent_router.py
+      - tests/test_rerank_phase8.py
+
+  "10":
+    description: Safety, circuit breaker and admission — unified guard, stream parity, blocklist, rewrite guard
+    contract_tests: true
+    pytest:
+      - tests/test_chat_inflight_guard.py
+      - tests/test_stream_scope_broadening_parity.py
+      - tests/test_circuit_open_user_message.py
+      - tests/test_rewrite_guard_locked_machine.py
+      - tests/test_query_blocklist_min_patterns.py
+      - tests/test_rag_safety_phase9.py
+      - tests/test_rag_circuit_breaker.py
+
+  "11":
+    description: Generation streaming and grounding v2 — real token stream, mandatory extractive-first, structured safety
+    contract_tests: true
+    pytest:
+      - tests/test_streaming_token_events.py
+      - tests/test_extractive_first_mandatory_safety.py
+      - tests/test_structured_safety_output.py
+      - tests/test_numeric_grounding_fail.py
+      - tests/test_generation_phase10.py
+      - tests/contracts/test_grounding_generation_contract.py
+
+  "12":
+    description: Session state, QA cache and rewrite safety — versioned cache fingerprint, hit revalidation, evidence TTL
+    contract_tests: true
+    pytest:
+      - tests/test_qa_cache_generation_invalidation.py
+      - tests/test_qa_cache_hit_revalidation.py
+      - tests/test_session_evidence_ttl_decay.py
+      - tests/test_rewrite_reject_restores_rules_rewrite.py
+      - tests/test_qa_cache_service.py
+      - tests/test_multiturn_phase11.py
+
+  "13":
+    description: Shim teardown and module consolidation — delete services/rag, import spine CI
+    contract_tests: true
+    pytest:
+      - tests/contracts/test_import_spine_v2.py
+      - tests/contracts/test_no_services_rag_imports.py
+      - tests/contracts/test_grounding_generation_contract.py
+      - tests/test_fallback_policy.py
+      - tests/test_rag_circuit_breaker.py
+      - tests/test_stream_scope_broadening_parity.py
+
+  "14":
+    description: Audit compliance and pre-flight — WORM hash chain, ingest/query preflight, export API
+    contract_tests: false
+    pytest:
+      - tests/test_worm_audit_chain_integrity.py
+      - tests/test_ingest_preflight_rejects.py
+      - tests/test_audit_export_rbac.py
+      - tests/test_secrets_quarantine.py
+
+  "15":
+    description: Eval gates and production lock v2 — runtime swap gate, SLO dashboards, release lock
+    contract_tests: true
+    pytest:
+      - tests/test_eval_gate_blocks_swap.py
+      - tests/test_production_lock_regression.py
+      - tests/test_production_lock_v2.py
+      - tests/test_embed_lineage_runtime.py
+      - tests/test_metrics_semantics_v2.py
+    eval:
+      - config: configs/eval/safety_critical.yaml
+        thresholds:
+          overall_case_pass_pct: 100
+      - config: configs/eval/adversarial.yaml
+        thresholds:
+          overall_case_pass_pct: 100
+
+  "16":
+    description: Go-live cutover — runbook, checklist, preflight dry-run, v2 docs complete
+    contract_tests: true
+    pytest:
+      - tests/contracts/test_go_live_cutover_contract.py
+      - tests/contracts/test_import_spine_v2.py
+      - tests/contracts/test_evaluation_release_gates_contract.py

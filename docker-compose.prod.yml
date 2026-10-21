@@ -1,0 +1,45 @@
+# Production overlay — assumes GPU host with nvidia-container-toolkit installed.
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Replaces Ollama with vLLM for the LLM (Ollama still serves embeddings).
+
+services:
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: spark_vllm
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      HUGGING_FACE_HUB_TOKEN: ${HUGGING_FACE_HUB_TOKEN:-}
+    command:
+      - "--model"
+      - "Qwen/Qwen2.5-14B-Instruct"
+      - "--max-model-len"
+      - "8192"
+      - "--gpu-memory-utilization"
+      - "0.9"
+      - "--port"
+      - "8001"
+    ports:
+      - "8001:8001"
+
+  postgres:
+    deploy:
+      resources:
+        limits:
+          memory: 8g
+
+  qdrant:
+    environment:
+      QDRANT__STORAGE__OPTIMIZERS__INDEXING_THRESHOLD: 50000
+      QDRANT__STORAGE__OPTIMIZERS__MEMMAP_THRESHOLD: 200000
+      QDRANT__STORAGE__QUANTIZATION__SCALAR__TYPE: int8
+      QDRANT__STORAGE__QUANTIZATION__SCALAR__QUANTILE: 0.99
+      QDRANT__STORAGE__QUANTIZATION__SCALAR__ALWAYS_RAM: "true"
+      QDRANT__STORAGE__ON_DISK_PAYLOAD: "true"

@@ -1,0 +1,81 @@
+schema_version: 1
+
+long_form_th:
+  strategy: recursive
+  chunk_size: 1200
+  chunk_overlap: 200
+  separators: ["\n\n", "\n", "?", ".", " ", ""]
+
+semantic_form_th:
+  strategy: semantic_heading
+  chunk_size: 1200
+  chunk_overlap: 200
+
+# Benchmark variants (issue #46) — see docs/chunking_benchmark.md
+medium_form_th:
+  strategy: recursive
+  chunk_size: 512
+  chunk_overlap: 128
+  separators: ["\n\n", "\n", "?", ".", " ", ""]
+
+compact_form_th:
+  strategy: recursive
+  chunk_size: 256
+  chunk_overlap: 64
+  separators: ["\n\n", "\n", "?", ".", " ", ""]
+
+wide_form_th:
+  strategy: recursive
+  chunk_size: 1024
+  chunk_overlap: 200
+  separators: ["\n\n", "\n", "?", ".", " ", ""]
+
+short_form_th:
+  strategy: recursive
+  chunk_size: 600
+  chunk_overlap: 100
+
+parent_child_th:
+  mode: parent_child
+  strategy: page_aware_parent_child
+  parent_chunk_size: 2400
+  parent_chunk_overlap: 64
+  child_chunk_size: 512
+  child_chunk_overlap: 64
+
+parent_child_th_v2:
+  mode: parent_child
+  strategy: page_aware_parent_child
+  parent_chunk_size: 2400
+  parent_chunk_overlap: 64
+  child_chunk_size: 512
+  child_chunk_overlap: 64
+
+page_aware_parent_child_th_v2:
+  mode: parent_child
+  strategy: page_aware_parent_child
+  parent_chunk_size: 2400
+  parent_chunk_overlap: 64
+  child_chunk_size: 512
+  child_chunk_overlap: 64
+
+# Benchmark-only — semantic_embedding disabled in production hot path (remediation v3 Phase 1)
+semantic_form_th_v2:
+  strategy: semantic_heading
+  chunk_size: 1200
+  chunk_overlap: 200
+
+structure_form_th:
+  strategy: sop_procedure
+  chunk_size: 1200
+  chunk_overlap: 200
+
+sop_procedure_th:
+  strategy: sop_procedure
+  chunk_size: 1200
+  chunk_overlap: 200
+
+table_row:
+  strategy: table_row
+  chunk_size: null
+  chunk_overlap: 0

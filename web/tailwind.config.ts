@@ -1,0 +1,188 @@
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  darkMode: "class",
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        spark: {
+          bg: "var(--bg-primary)",
+          surface: "var(--bg-surface)",
+          elevated: "var(--bg-elevated)",
+          hover: "var(--bg-hover)",
+          border: "var(--border-default)",
+          "border-strong": "var(--border-strong)",
+          accent: "var(--accent)",
+          "accent-muted": "var(--accent-muted)",
+          warning: "var(--warning)",
+          "warning-muted": "var(--warning-muted)",
+          success: "var(--success)",
+          "success-muted": "var(--success-muted)",
+          critical: "var(--critical)",
+          "critical-muted": "var(--critical-muted)",
+          danger: "var(--danger)",
+          "danger-muted": "var(--danger-muted)",
+          info: "var(--info)",
+          "info-muted": "var(--info-muted)",
+          "text-primary": "var(--text-primary)",
+          "text-secondary": "var(--text-secondary)",
+          "text-muted": "var(--text-muted)",
+        },
+        gemini: {
+          bg: "var(--gemini-bg)",
+          "dark-bg": "var(--gemini-bg)",
+          sidebar: "var(--gemini-sidebar)",
+          "dark-sidebar": "var(--gemini-sidebar)",
+          surface: "var(--gemini-surface)",
+          "dark-surface": "var(--gemini-surface)",
+          active: "var(--gemini-active)",
+          "dark-active": "var(--gemini-active)",
+          text: "var(--gemini-text)",
+          "dark-text": "var(--gemini-text)",
+          muted: "var(--gemini-muted)",
+          "dark-muted": "var(--gemini-muted)",
+          border: "var(--gemini-border)",
+          "dark-border": "var(--gemini-border)",
+          hover: "var(--gemini-hover)",
+          "dark-hover": "var(--gemini-hover)",
+          "new-chat": "var(--gemini-new-chat)",
+          "dark-new-chat": "var(--gemini-new-chat)",
+          blue: "var(--gemini-blue)",
+          "dark-blue": "var(--gemini-blue)",
+        },
+        landing: {
+          bg: "var(--landing-bg)",
+          surface: "var(--landing-surface)",
+          border: "var(--landing-border)",
+          text: "var(--landing-text)",
+          muted: "var(--landing-muted)",
+          cta: "var(--landing-cta)",
+          "cta-hover": "var(--landing-cta-hover)",
+        },
+        auth: {
+          bg: "var(--auth-bg)",
+          card: "var(--auth-card)",
+          surface: "var(--auth-surface)",
+          input: "var(--auth-input)",
+          border: "var(--auth-border)",
+          text: "var(--auth-text)",
+          muted: "var(--auth-muted)",
+          sub: "var(--auth-sub)",
+          headline: "var(--auth-headline)",
+          accent: "var(--auth-accent)",
+          "accent-muted": "var(--auth-accent-muted)",
+          hover: "var(--auth-hover)",
+        },
+      },
+      fontFamily: {
+        sans: [
+          "var(--font-sans-thai)",
+          "var(--font-sans)",
+          "system-ui",
+          "sans-serif",
+        ],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      },
+      fontSize: {
+        xs: ["var(--text-xs)", { lineHeight: "1.4" }],
+        sm: ["var(--text-sm)", { lineHeight: "1.45" }],
+        base: ["var(--text-base)", { lineHeight: "1.5" }],
+        lg: ["var(--text-lg)", { lineHeight: "1.4" }],
+        xl: ["var(--text-xl)", { lineHeight: "1.3" }],
+        "2xl": ["var(--text-2xl)", { lineHeight: "1.25" }],
+      },
+      borderRadius: {
+        none: "0",
+        sm: "var(--radius-sm)",
+        DEFAULT: "var(--radius-sm)",
+        md: "var(--radius-md)",
+        lg: "var(--radius-lg)",
+        xl: "1.25rem",
+        full: "9999px",
+      },
+      boxShadow: {
+        glow: "var(--shadow-glow)",
+        "glow-strong": "var(--shadow-glow-strong)",
+        "gemini-input": "0 1px 3px rgba(0, 0, 0, 0.08)",
+        "gemini-input-dark": "0 1px 4px rgba(0, 0, 0, 0.35)",
+        "gemini-new-chat": "0 1px 2px rgba(0, 0, 0, 0.06)",
+        "gemini-new-chat-dark": "0 1px 3px rgba(0, 0, 0, 0.4)",
+      },
+      backgroundImage: {
+        "spark-gradient": "var(--gradient-primary)",
+        "gemini-welcome": "linear-gradient(135deg, #4285f4 0%, #a855f7 50%, #ec4899 100%)",
+        "gemini-welcome-soft":
+          "linear-gradient(135deg, rgba(66, 133, 244, 0.18) 0%, rgba(168, 85, 247, 0.14) 50%, rgba(236, 72, 153, 0.12) 100%)",
+        "gemini-welcome-soft-dark":
+          "linear-gradient(135deg, rgba(66, 133, 244, 0.28) 0%, rgba(168, 85, 247, 0.22) 50%, rgba(236, 72, 153, 0.18) 100%)",
+        "gemini-loading":
+          "linear-gradient(90deg, var(--gemini-surface) 0%, var(--gemini-active) 50%, var(--gemini-surface) 100%)",
+        "gemini-loading-dark":
+          "linear-gradient(90deg, var(--gemini-surface) 0%, var(--gemini-active) 50%, var(--gemini-surface) 100%)",
+      },
+      spacing: {
+        sidebar: "var(--sidebar-expanded)",
+        "sidebar-collapsed": "var(--sidebar-collapsed)",
+        "chat-sidebar": "var(--chat-sidebar-expanded)",
+        "chat-sidebar-collapsed": "var(--chat-sidebar-collapsed)",
+      },
+      transitionDuration: {
+        fast: "120ms",
+      },
+      animation: {
+        "pulse-border": "pulse-border 1.5s ease-in-out infinite",
+        "status-pulse": "status-pulse 1.5s ease-in-out infinite",
+        "gemini-shimmer": "gemini-shimmer 2.5s ease-in-out infinite",
+        "landing-float": "landing-float 6s ease-in-out infinite",
+        "landing-float-delayed": "landing-float 6s ease-in-out 2s infinite",
+        "landing-orbit": "landing-orbit 20s linear infinite",
+        "landing-marquee": "landing-marquee 40s linear infinite",
+        "landing-gradient": "landing-gradient 8s ease infinite",
+        "landing-fade-up": "landing-fade-up 0.8s ease-out forwards",
+        "landing-pulse-glow": "landing-pulse-glow 3s ease-in-out infinite",
+        "landing-scan": "landing-scan 4s ease-in-out infinite",
+      },
+      keyframes: {
+        "gemini-shimmer": {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
+        "landing-float": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-12px)" },
+        },
+        "landing-orbit": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        "landing-marquee": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        "landing-gradient": {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
+        "landing-fade-up": {
+          "0%": { opacity: "0", transform: "translateY(24px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "landing-pulse-glow": {
+          "0%, 100%": { opacity: "0.4", transform: "scale(1)" },
+          "50%": { opacity: "0.7", transform: "scale(1.05)" },
+        },
+        "landing-scan": {
+          "0%, 100%": { transform: "translateY(-100%)", opacity: "0" },
+          "50%": { transform: "translateY(100%)", opacity: "0.6" },
+        },
+      },
+    },
+  },
+  plugins: [],
+};
+
+export default config;

@@ -1,0 +1,4 @@
+# Ingest quality evaluation subset (Phase 4)
+phase: 4
+description: Chunk count bounds and header presence checks
+config: configs/eval/ingest_quality.yaml

@@ -1,0 +1,6 @@
+# Phase 13 — legacy teardown
+phase: 13
+description: Dead code, docs drift, final native-only cleanup
+contract_tests: true
+eval_subset: adversarial
+eval_suite: adversarial

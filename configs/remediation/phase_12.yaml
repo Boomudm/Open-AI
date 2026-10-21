@@ -1,0 +1,6 @@
+# Phase 12 — adversarial eval subset (deterministic CI)
+phase: 12
+description: Adversarial + held-out CI, prod eval gates
+contract_tests: true
+eval_subset: adversarial
+eval_suite: adversarial

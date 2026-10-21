@@ -1,0 +1,6 @@
+# Phase 6 lexical eval baseline — recall@k gates
+phase: 6
+description: Thai FTS and industrial token recall
+config: configs/eval/lexical_baseline.yaml
+thresholds:
+  overall_case_pass_pct: 90

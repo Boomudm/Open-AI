@@ -1,0 +1,7 @@
+version: 0
+rules:
+  injection_patterns: []
+  safety_critical_phrases: []
+  quarantine_document_types: []
+  block_on_severity: high
+  quarantine_on_severity: medium

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spark.local/schemas/ingestion_document_type.schema.json",
+  "title": "SparkIngestionDocumentType",
+  "type": "object",
+  "required": ["document_type", "parser", "default_route"],
+  "additionalProperties": true,
+  "properties": {
+    "document_type": { "type": "string", "minLength": 1 },
+    "document_category": { "type": "string" },
+    "parser": { "type": "string", "minLength": 1 },
+    "default_route": {
+      "type": "string",
+      "enum": ["qdrant", "postgres", "both"]
+    },
+    "required_metadata": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "optional_metadata": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "chunking": {
+      "type": "object",
+      "properties": {
+        "profile": { "type": "string", "minLength": 1 },
+        "strategy": { "type": "string" }
+      }
+    },
+    "dedup": {
+      "type": "object",
+      "required": ["strategy"],
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": ["skip_if_exists", "reingest_replace"]
+        },
+        "by": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ]
+        }
+      }
+    }
+  }
+}

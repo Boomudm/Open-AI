@@ -1,0 +1,66 @@
+# RAG v2 Prometheus alert rules (Phase 15)
+
+groups:
+  - name: spark_rag_v2
+    rules:
+      - alert: RagQueryLatencyP95High
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum by (le) (rate(spark_rag_query_seconds_bucket[5m]))
+          ) > 8
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: RAG query P95 latency above 8s
+
+      - alert: RagCircuitOpenTooLong
+        expr: max by (factory_id, dependency) (spark_rag_circuit_open) == 1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: RAG circuit breaker open for factory {{ $labels.factory_id }} dependency {{ $labels.dependency }}
+
+      - alert: RagEmbedErrorRateHigh
+        expr: |
+          (
+            sum(rate(spark_rag_embed_error_total[5m]))
+            /
+            clamp_min(sum(rate(spark_rag_query_total[5m])), 0.01)
+          ) > 0.10
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: RAG embed error rate above 10%
+
+      - alert: VectorDriftDetected
+        expr: |
+          (
+            sum(rate(spark_vector_drift_detected_total[5m]))
+            /
+            clamp_min(sum(rate(spark_ingest_rows_total[5m])), 0.01)
+          ) > 0.001
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: Vector drift rate above 0.1%
+
+      - alert: IngestPurgeBacklogHigh
+        expr: max(spark_ingest_purge_backlog) > 100
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: Ingest purge outbox backlog is high
+
+      - alert: RagVectorCollectionFailSpike
+        expr: sum(rate(spark_rag_vector_collection_fail_total[5m])) > 0.5
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: Qdrant vector collection failure rate spike

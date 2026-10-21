@@ -1,0 +1,19 @@
+{
+  "_deprecated": "Superseded by configs/eval/production_lock_v3.json (remediation_blueprint_v3 Phase 13)",
+  "version": 2,
+  "suites": {
+    "baseline_ci": {
+      "overall_case_pass_pct": 92.0
+    },
+    "adversarial": {
+      "overall_case_pass_pct": 100.0
+    },
+    "safety_critical": {
+      "overall_case_pass_pct": 100.0
+    },
+    "grounding": {
+      "citation_accuracy_pct": 95.0
+    }
+  },
+  "notes": "Remediation v2 Phase 15 — minimum suite thresholds for develop PRs and release_gate.sh"
+}

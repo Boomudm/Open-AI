@@ -1,0 +1,51 @@
+# Centralized system constants — remediation v4.
+# All tuning parameters previously hardcoded across the codebase.
+# Override per-environment via factory config or env vars.
+
+version: 1
+
+# --- Ingestion Quality ---
+ingest:
+  default_min_chars_per_page: 20
+  qdrant_flush_size: 32
+  default_batch_size: 64
+  under_count_tolerance: 0.05
+  ghost_count_tolerance: 0.02
+  safety_ocr_block_fail_ratio: 0.30
+
+# --- Generation Safety ---
+generation:
+  max_uncited_sentence_ratio: 0.20
+  safety_max_uncited_sentence_ratio: 0.0
+  nli_lexical_overlap_threshold: 0.60
+  self_verify_safety_score_threshold: 0.85
+  self_verify_safety_max_unsupported: 0
+  self_verify_general_score_threshold: 0.6
+  self_verify_general_min_unsupported: 2
+  chat_history_max_turns: 10
+  chat_history_max_message_length: 2000
+
+# --- Retrieval Scoring ---
+retrieval:
+  min_rerank_score: 0.35
+  min_rerank_avg_score: 0.25
+  min_relevant_doc_score: 0.35
+  min_extractive_evidence_score: 0.22
+  min_evidence_score: 0.18
+  min_lexical_for_repair: 0.008
+  safety_loto_min_max_score: 0.45
+  safety_loto_min_avg_score: 0.35
+  safety_sop_min_max_score: 0.40
+  safety_sop_min_avg_score: 0.30
+  candidate_pool_limit: 64
+
+# --- Circuit Breaker ---
+circuit:
+  rag_inflight_ttl_sec: 300
+  query_blocklist_reload_sec: 60
+
+# --- Token Counting ---
+tokens:
+  chars_per_token_latin: 2.5
+  chars_per_token_thai: 1.8
+  thai_threshold_ratio: 0.20

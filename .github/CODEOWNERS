@@ -1,0 +1,21 @@
+# Neo Chat — code ownership
+# Delivery maintainership: sole code owner is @fournarin.
+# Update @handles if maintainership changes.
+
+* @fournarin
+
+/.github/ @fournarin
+/docs/ @fournarin
+/CONTRIBUTING.md @fournarin
+/SECURITY.md @fournarin
+/README.md @fournarin
+/deploy/ @fournarin
+/src/ @fournarin
+/tests/ @fournarin
+/configs/ @fournarin
+/alembic/ @fournarin
+/scripts/ @fournarin
+/web/ @fournarin
+/ops/ @fournarin
+/docker-compose*.yml @fournarin
+/Dockerfile.* @fournarin

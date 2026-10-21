@@ -1,0 +1,24 @@
+# AUTO-GENERATED from intent_weights_v2.yaml — do not edit by hand.
+# Regenerate: uv run python scripts/sync_retrieval_configs.py
+defaults:
+  max_fusion_rank: 3
+  min_rank_gap: 0.04
+safety:
+  abstain_raw_fusion: 0.28
+intents:
+  part_lookup:
+    min_raw_fusion: 0.2
+  safety_loto:
+    min_raw_fusion: 0.28
+  alarm_diagnostic:
+    min_raw_fusion: 0.2
+  procedure:
+    min_raw_fusion: 0.22
+  io_mapping:
+    min_raw_fusion: 0.2
+  drawing:
+    min_raw_fusion: 0.18
+  drawing_connectivity:
+    min_raw_fusion: 0.18
+  general:
+    min_raw_fusion: 0.18

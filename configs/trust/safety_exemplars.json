@@ -1,0 +1,19 @@
+{
+  "loto": [
+    "lockout tagout procedure before maintenance",
+    "LOTO steps for zero energy state",
+    "ก่อนซ่อมต้อง lock out tag out breaker",
+    "ล็อคเอาต์ tag ก่อนเข้าซ่อมเครื่อง"
+  ],
+  "emergency_override": [
+    "skip lockout temporarily for quick fix",
+    "bypass safety interlock while running",
+    "ข้าม loto ชั่วคราวได้ไหม",
+    "disable guard override emergency stop"
+  ],
+  "interlock": [
+    "bypass machine guard interlock",
+    "override safety interlock sensor",
+    "run without guard interlock engaged"
+  ]
+}

@@ -1,0 +1,4 @@
+# Phase 2 — ingest security guardrails eval subset
+phase: 2
+description: Content policy quarantine and release gates
+config: configs/eval/ingest_security.yaml

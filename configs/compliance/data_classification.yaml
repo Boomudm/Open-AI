@@ -1,0 +1,114 @@
+# Compliance data classification — aligned to configs/ingestion/*.yaml document types (Phase 14).
+# Validated by scripts/validate_compliance_taxonomy.py
+
+version: 1
+
+document_types:
+  sop:
+    classification_level: internal
+    retention_days: 2555
+    pii_handling: scan_and_quarantine
+    export_allowed: true
+    notes: Standard operating procedures; safety-critical retrieval gates apply.
+
+  machine_manual:
+    classification_level: internal
+    retention_days: 2555
+    pii_handling: redact_on_export
+    export_allowed: true
+    notes: Factory equipment manuals; may contain English source text.
+
+  drawing:
+    classification_level: internal
+    retention_days: 2555
+    pii_handling: redact_on_export
+    export_allowed: true
+    notes: >-
+      Electrical/wiring/schematic drawings; title blocks often name the
+      customer or contracting company. Vector-drawing pages are described via
+      vision-LLM extraction (see src/spark/ingestion/parsers/vision_diagram.py)
+      and may be flagged needs_review — treat as advisory, not verified fact,
+      until confirmed against the source page.
+
+  io_mapping:
+    classification_level: internal
+    retention_days: 2555
+    pii_handling: none_expected
+    export_allowed: true
+    notes: PLC/IO symlink mapping tables; device tags and hardware ports, no personal data expected.
+
+  near_miss:
+    classification_level: confidential
+    retention_days: 2555
+    pii_handling: redact_on_export
+    export_allowed: false
+
+  iso_certificate:
+    classification_level: internal
+    retention_days: 2555
+    pii_handling: none_expected
+    export_allowed: true
+
+  inspection_report:
+    classification_level: internal
+    retention_days: 2555
+    pii_handling: scan_and_quarantine
+    export_allowed: true
+    notes: Quality/inspection records; may name inspectors or reference personnel.
+
+  training_note:
+    classification_level: internal
+    retention_days: 1095
+    pii_handling: scan_and_quarantine
+    export_allowed: true
+
+  knowledge_document:
+    classification_level: internal
+    retention_days: 1095
+    pii_handling: scan_and_quarantine
+    export_allowed: true
+
+  datasheet:
+    classification_level: internal
+    retention_days: 1825
+    pii_handling: none_expected
+    export_allowed: true
+
+  company_policy:
+    classification_level: internal
+    retention_days: 2555
+    pii_handling: scan_and_quarantine
+    export_allowed: true
+    notes: Company-wide policies; may reference internal personnel roles.
+
+  hr_handbook:
+    classification_level: confidential
+    retention_days: 2555
+    pii_handling: redact_on_export
+    export_allowed: false
+    notes: HR handbooks contain employee-related policies and may include PII.
+
+  internal_guideline:
+    classification_level: internal
+    retention_days: 1825
+    pii_handling: scan_and_quarantine
+    export_allowed: true
+    notes: Internal operational guidelines and best practices.
+
+  generic:
+    classification_level: internal
+    retention_days: 1095
+    pii_handling: scan_and_quarantine
+    export_allowed: true
+
+aliases:
+  safety_manual: safety_certificate
+
+export:
+  worm_audit_required: true
+  max_bundle_days: 365
+  download_url_ttl_sec: 900
+  rate_limit_per_user_hour: 10
+  allowed_roles:
+    - compliance_officer
+    - admin

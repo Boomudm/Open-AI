@@ -1,0 +1,20 @@
+[Unit]
+Description=Spark GPU inference sidecar (bge-m3 embed + bge-reranker rerank on Jetson GPU)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=jetson
+Group=jetson
+WorkingDirectory=/mnt/nvme-data/spark-1/gpu-sidecar
+ExecStart=/mnt/nvme-data/spark-1/gpu-sidecar/start.sh
+Restart=always
+RestartSec=5
+# Give model load headroom on a cold boot.
+TimeoutStartSec=180
+# JetPack CUDA libs live on the host; keep the JetPack env available.
+Environment=CUDA_VISIBLE_DEVICES=0
+
+[Install]
+WantedBy=multi-user.target

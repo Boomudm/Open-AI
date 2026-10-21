@@ -1,0 +1,6 @@
+# Phase 8 — RAG safety / guardrail cases
+phase: 8
+description: RAG CB, rate limits, fallback ladder
+contract_tests: true
+eval_subset: rag_safety
+eval_suite: adversarial

@@ -1,0 +1,6 @@
+# Phase 9 — citation + numeric grounding cases
+phase: 9
+description: Extract-then-paraphrase, Thai, citations
+contract_tests: true
+eval_subset: grounding
+eval_suite: baseline

@@ -1,0 +1,199 @@
+# Local dev overlay — API + Celery on top of postgres/redis/qdrant/minio from docker-compose.yml
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.dev-app.yml up -d
+#
+# LLM_PROFILE=gemma_remote → chat + embeddings hit api.kcalsion.com (OLLAMA_API_KEY in .env).
+# LLM_PROFILE=demo         → local Ollama at host.docker.internal:11434 (OLLAMA_BASE_URL).
+#
+# Web frontend: run separately on the host with:  cd web && npm run dev
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+      # Build through the HOST network stack: the docker daemon's configured
+      # DNS (dead 192.168.x VPN resolvers) breaks pip during image builds
+      # ("from versions: none"). Runtime DNS is already overridden per-service;
+      # this does the same for build-time without touching daemon.json.
+      network: host
+    container_name: spark_api
+    # Survive host reboots / daemon restarts (infra services already do; api and
+    # the celery services previously did NOT, so the whole app stayed down after
+    # a reboot until manually started).
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+      QDRANT_HOST: qdrant
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      STORAGE_BACKEND: s3
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-sparkminio}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-sparkminio}
+      S3_BUCKET: ${S3_BUCKET:-spark-documents}
+      SPARK_ALLOW_CPU_RERANK: "0"
+      # GPU inference sidecar (host py3.8 + JetPack CUDA torch). Offloads dense
+      # embed + cross-encoder rerank to the GPU; app falls back to CPU if unset
+      # or unreachable. Reached via the host-gateway alias below.
+      GPU_SIDECAR_URL: ${GPU_SIDECAR_URL:-http://host.docker.internal:8137}
+      GPU_SIDECAR_TIMEOUT_SEC: ${GPU_SIDECAR_TIMEOUT_SEC:-90}
+      GPU_SIDECAR_REQUIRED: ${GPU_SIDECAR_REQUIRED:-false}
+      # Sidecar rerank is fast but 16 long manual pairs still need headroom on Jetson.
+      RAG_RERANK_TIMEOUT_SEC: ${RAG_RERANK_TIMEOUT_SEC:-30}
+      RAG_RERANK_MAX_CANDIDATES: ${RAG_RERANK_MAX_CANDIDATES:-16}
+      INGEST_ENCODE_WORKERS: ${INGEST_ENCODE_WORKERS:-1}
+      INGEST_EMBED_BATCH_SIZE: ${INGEST_EMBED_BATCH_SIZE:-4}
+      # Jetson + query decomposition can exceed the default 30s end-to-end budget.
+      RAG_REQUEST_BUDGET_MS: ${RAG_REQUEST_BUDGET_MS:-90000}
+      RAG_LLM_TIMEOUT_SEC: ${RAG_LLM_TIMEOUT_SEC:-90}
+    volumes:
+      # Persist the HF model cache on the host. Without this, `up --force-recreate`
+      # starts the container with an empty cache and it must re-download ~2.9GB
+      # (bge-m3 + docling) on first use — which it cannot do: DNS does not resolve
+      # in these containers (hence the pinned extra_hosts below), so huggingface.co
+      # is unreachable and ingestion dies at embed time with "Can't load the
+      # configuration of 'BAAI/bge-m3'". Mounting keeps the models offline-available.
+      - /home/jetson/.cache/huggingface:/app/.cache/huggingface
+    dns:
+      # This LAN blocks outbound DNS to 8.8.8.8 / 1.1.1.1 (UDP/TCP 53 timeout),
+      # which breaks Google OAuth token exchange and other external HTTPS that
+      # needs name resolution. Use the site resolvers the host already uses
+      # (wlan0 via systemd-resolved). Container-to-container names still go
+      # through Docker's embedded resolver at 127.0.0.11.
+      - 192.168.72.10
+      - 192.168.186.10
+      - 192.168.1.1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "api.kcalsion.com:104.21.44.165"
+      - "forge.kcalsion.com:104.21.44.165"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+      minio:
+        condition: service_healthy
+      minio_init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 180s
+    command:
+      - uvicorn
+      - spark.main:app
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+      - --app-dir
+      - src
+      - --workers
+      - "${API_WORKERS:-3}"
+      - --timeout-keep-alive
+      - "120"
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+      network: host
+    container_name: spark_celery
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+      QDRANT_HOST: qdrant
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      STORAGE_BACKEND: s3
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-sparkminio}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-sparkminio}
+      S3_BUCKET: ${S3_BUCKET:-spark-documents}
+      SPARK_ALLOW_CPU_RERANK: "0"
+      # GPU inference sidecar (host py3.8 + JetPack CUDA torch). Offloads dense
+      # embed + cross-encoder rerank to the GPU; app falls back to CPU if unset
+      # or unreachable. Reached via the host-gateway alias below.
+      GPU_SIDECAR_URL: ${GPU_SIDECAR_URL:-http://host.docker.internal:8137}
+      GPU_SIDECAR_TIMEOUT_SEC: ${GPU_SIDECAR_TIMEOUT_SEC:-90}
+      GPU_SIDECAR_REQUIRED: ${GPU_SIDECAR_REQUIRED:-false}
+      # Sidecar rerank is fast but 16 long manual pairs still need headroom on Jetson.
+      RAG_RERANK_TIMEOUT_SEC: ${RAG_RERANK_TIMEOUT_SEC:-30}
+      RAG_RERANK_MAX_CANDIDATES: ${RAG_RERANK_MAX_CANDIDATES:-16}
+      INGEST_ENCODE_WORKERS: ${INGEST_ENCODE_WORKERS:-1}
+      INGEST_EMBED_BATCH_SIZE: ${INGEST_EMBED_BATCH_SIZE:-4}
+      # Jetson + query decomposition can exceed the default 30s end-to-end budget.
+      RAG_REQUEST_BUDGET_MS: ${RAG_REQUEST_BUDGET_MS:-90000}
+      RAG_LLM_TIMEOUT_SEC: ${RAG_LLM_TIMEOUT_SEC:-90}
+    volumes:
+      # Persist the HF model cache on the host. Without this, `up --force-recreate`
+      # starts the container with an empty cache and it must re-download ~2.9GB
+      # (bge-m3 + docling) on first use — which it cannot do: DNS does not resolve
+      # in these containers (hence the pinned extra_hosts below), so huggingface.co
+      # is unreachable and ingestion dies at embed time with "Can't load the
+      # configuration of 'BAAI/bge-m3'". Mounting keeps the models offline-available.
+      - /home/jetson/.cache/huggingface:/app/.cache/huggingface
+    dns:
+      # Same LAN DNS as api — public resolvers are unreachable here (see api.dns).
+      - 192.168.72.10
+      - 192.168.186.10
+      - 192.168.1.1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "api.kcalsion.com:104.21.44.165"
+      - "forge.kcalsion.com:104.21.44.165"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      minio_init:
+        condition: service_completed_successfully
+      api:
+        condition: service_healthy
+    command:
+      - celery
+      - -A
+      - spark.workers.celery_app
+      - worker
+      - --loglevel=info
+      - --concurrency=${CELERY_CONCURRENCY:-2}
+      - --max-tasks-per-child=50
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+      network: host
+    container_name: spark_celery_beat
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+      SPARK_ALLOW_CPU_RERANK: "1"
+    command:
+      - celery
+      - -A
+      - spark.workers.celery_app
+      - beat
+      - --loglevel=info
+    depends_on:
+      redis:
+        condition: service_healthy

@@ -1,0 +1,316 @@
+# Embedding standard (all profiles): BAAI/bge-m3 — multilingual, cross-lingual dense
+# encoder (Thai query ↔ English manual), 1024-dim, run locally via sentence-transformers
+# with L2-normalized output (Qdrant cosine). Chat/LLM backends still vary per profile.
+#
+# Switching off the old 768-dim encoders (nomic / embeddinggemma) REQUIRES a full
+# re-ingest so Qdrant collections are rebuilt at 1024-dim (qdrant_router asserts dims).
+#
+# embed_provider options: sentence_transformers (local) | forge | openai | ollama.
+
+tagging:
+  # Was pointed at a local Ollama (localhost:11434) that doesn't exist on this
+  # box — no LLM ever ran locally here, everything goes through the remote
+  # gateway (see gemma_remote below). That misconfiguration silently broke
+  # session auto-titling and long-question compression (both swallow the
+  # "All connection attempts failed" error and just skip the feature) without
+  # ever surfacing as a user-visible chat failure, unlike the same bug in the
+  # "judge" profile below.
+  # Repointed to KKU gemini-2.5-flash (fast, high-concurrency): this profile also
+  # drives the hot RAG path — router, query rewrite, decompose, NLI gate, and
+  # retrieval-verify — so a slow backend here dominates end-to-end latency.
+  provider: openai
+  base_url: https://gen.ai.kku.ac.th/api/v1
+  llm_model: deepseek-v4-flash  # was gemini-2.5-flash (KKU daily token limit hit); deepseek-v4 has quota
+  api_key: ${KKU_API_KEY}
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0
+  num_ctx: 2048
+
+demo:
+  provider: ollama
+  base_url: http://localhost:11434
+  llm_model: qwen2.5:3b-instruct
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0.1
+  num_ctx: 4096
+
+judge:
+  # Same dead-local-Ollama misconfiguration as "tagging" above, but this one
+  # IS user-visible: any question routed to analytics_service.query() (SQL
+  # generation + semantic validation) hard-failed with "All connection
+  # attempts failed" -> UNAVAILABLE_ANSWER ("ระบบ AI ไม่พร้อมชั่วคราว...")
+  # every single time, regardless of whether the SQL itself was fine.
+  # Repointed to KKU gemini-2.5-flash (was slow qwen on kcalsion).
+  provider: openai
+  base_url: https://gen.ai.kku.ac.th/api/v1
+  llm_model: deepseek-v4-flash  # was gemini-2.5-flash (KKU daily token limit hit); deepseek-v4 has quota
+  api_key: ${KKU_API_KEY}
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0
+  num_ctx: 4096
+
+# Stronger local model for Thai summarization from English machine_manual chunks.
+# Set SPARK_LLM_PROFILE=rag_th when qwen2.5:7b-instruct is pulled in Ollama.
+rag_th:
+  provider: ollama
+  base_url: http://localhost:11434
+  llm_model: qwen2.5:7b-instruct
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0.1
+  num_ctx: 8192
+
+# Vision-capable model for diagram/schematic ingestion (drawing document type).
+# Served by the kcalsion gateway (same OLLAMA_API_KEY as chat) — qwen3-vl:4b is
+# confirmed pulled there and follows the detailed circuit-by-circuit markdown
+# prompt (see vision_diagram.py). The prompt asks for an exhaustive per-page
+# reverse-engineering analysis, so max_tokens must be far above the ChatOpenAI
+# default of 2048 or the tables/ASCII diagram get truncated mid-answer.
+# num_ctx is only honored by the ollama provider path (get_chat_llm passes it
+# to ChatOllama, not ChatOpenAI) — kept here for provider-switch safety.
+# See the vision block in configs/ingestion/drawing.yaml for the per-doc-type
+# dpi/timeout/concurrency knobs.
+# There is NO local Ollama on this box (nothing listens on :11434); pointing
+# this profile at localhost silently broke every diagram extraction.
+vision_extract:
+  provider: openai
+  # KKU gemini-3-flash-preview, not kcalsion qwen3-vl:4b. Measured on a real
+  # wiring sheet (5 identical Cut Back Slide circuits, page 8 of the F-05 binder):
+  #
+  #   qwen3-vl:4b   ~80s/page, and NOT reproducible run-to-run at temperature 0 —
+  #                 one run read M17–M21 correctly, the next lost them entirely and
+  #                 invented "ORIENTAL AZD-KEP (S)/(T)/(E)…", then hallucinated M18
+  #                 onto page 9 as a power source. It also never read the small
+  #                 print right: 3~0.06kW → "3~0.6kW", DCC2_24V → "DCC2.ZA Y",
+  #                 AZD-KEP → "A2D-KEP".
+  #   gemini-3-flash ~16s/page, exact: M17–M21, "Cut Back Slide 3~0.06kW",
+  #                 "ORIENTAL AZD-KEP", terminal T13, and the DCC2_24V/DCC2_0V/GND
+  #                 rails — and it models each motor's own driver on the shared bus.
+  #
+  # No prompt or parser work can compensate for a model that cannot read the sheet,
+  # so the model is the fix. This gateway is also not behind Cloudflare, which
+  # removes the 100s-of-silence 524 constraint that forced streaming + concurrency 1.
+  base_url: https://gen.ai.kku.ac.th/api/v1
+  llm_model: gemini-3-flash-preview
+  api_key: ${KKU_API_KEY}
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0
+  # Tables are ordered first in the skeleton, so structured output is never cut;
+  # 7168 leaves room for the power/impact sections too.
+  max_tokens: 7168
+
+# Fallback rungs for vision_extract — see `llm_profile_fallbacks` in
+# configs/ingestion/drawing.yaml. KKU enforces a *daily* budget per model and
+# returns 401 {"error": "This model reached daily limit."} for every page at once,
+# so a single-model config turns a whole binder into blank pages the moment the
+# budget runs out. All three below were checked against the same real sheet
+# (5 Cut Back Slide circuits): each reads M17–M21 and the 3~0.06kW rating.
+# The last rung is deliberately on a *different* provider so one exhausted KKU
+# quota cannot take out the whole ladder.
+vision_extract_gpt:
+  provider: openai
+  base_url: https://gen.ai.kku.ac.th/api/v1
+  llm_model: gpt-5.4-mini            # ~3s/page, reads tags + 0.06kW correctly
+  api_key: ${KKU_API_KEY}
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0
+  max_tokens: 7168
+
+vision_extract_llama:
+  provider: openai
+  base_url: https://gen.ai.kku.ac.th/api/v1
+  llm_model: llama-4-maverick        # ~5s/page, reads tags + 0.06kW correctly
+  api_key: ${KKU_API_KEY}
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0
+  max_tokens: 7168
+
+vision_extract_local:
+  # Last resort, different provider (no KKU quota). Weak: not reproducible at
+  # temperature 0 and misreads small print (0.06kW→0.6kW, AZD-KEP→A2D-KEP), but a
+  # rough reading beats an empty drawing. This gateway IS behind Cloudflare, which
+  # 524s any request silent for ~100s — _astream_text streams to avoid that.
+  provider: openai
+  base_url: https://api.kcalsion.com/v1
+  llm_model: qwen3-vl:4b
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0
+  max_tokens: 7168
+
+# Fast Thai translation for EN machine_manual spans (Phase 9 — not regex glossary).
+translate_th:
+  provider: ollama
+  base_url: http://localhost:11434
+  llm_model: qwen2.5:3b-instruct
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0
+  num_ctx: 4096
+
+prod:
+  provider: vllm
+  base_url: http://localhost:8001/v1
+  llm_model: Qwen/Qwen2.5-14B-Instruct
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0.1
+  num_ctx: 8192
+  reranker:
+    enabled: true
+    model: bge-reranker-v2-m3
+
+# Production gateway — qwen3.6:35b-a3b chat via the on-box OpenAI-compatible proxy
+# (proxy.py :9090, exposed as api.kcalsion.com). Embeddings run locally with bge-m3
+# (sentence-transformers) — independent of whether the gateway serves an embed model.
+# The chat API key is read from .env (OLLAMA_API_KEY); not stored in this tracked file.
+gemma:
+  provider: openai
+  # Docker containers reach host proxy via host.docker.internal (see docker-compose.kcalsion.yml).
+  # Native dev on the server host can override with http://127.0.0.1:9090/v1 in a local .env overlay.
+  base_url: http://host.docker.internal:9090/v1
+  llm_model: qwen3.6:35b-a3b
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0.1
+  num_ctx: 8192
+  reranker:
+    enabled: true
+    model: bge-reranker-v2-m3
+
+# Mac/local dev → kcalsion gateway (HTTPS, no SSH tunnel required):
+#   OLLAMA_API_KEY=<your-gateway-key>  LLM_PROFILE=gemma_remote
+# Smoke test:
+#   curl -s https://api.kcalsion.com/v1/chat/completions \
+#     -H "Authorization: Bearer $OLLAMA_API_KEY" \
+#     -H "Content-Type: application/json" \
+#     -d '{"model":"qwen3.6:35b-a3b","messages":[{"role":"user","content":"คุณคือโมเดลอะไร"}],"max_tokens":100}'
+# Alternative: SSH tunnel to on-box proxy — ssh -N -L 19090:127.0.0.1:9090 ssh.kcalsion.com
+#   then set base_url to http://127.0.0.1:19090/v1 (dev.sh uses host :9090 for Prometheus)
+gemma_tunnel:
+  provider: openai
+  base_url: http://127.0.0.1:19090/v1
+  llm_model: qwen3.6:35b-a3b
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  sparse_embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0.1
+  num_ctx: 8192
+  reranker:
+    enabled: true
+    model: bge-reranker-v2-m3
+
+gemma_remote:
+  provider: openai
+  base_url: https://api.kcalsion.com/v1
+  llm_model: qwen3.6:35b-a3b
+  # Embedding runs locally via sentence-transformers (bge-m3).
+  # The gateway does not expose /v1/embeddings; local embed is also faster
+  # and avoids network latency on ingest. Flip back to embed_provider: openai
+  # only if/when the gateway adds a dedicated embeddings endpoint.
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  sparse_embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0.1
+  num_ctx: 8192
+  reranker:
+    enabled: true
+    model: bge-reranker-v2-m3
+
+# Lenovo server — chat + embeddings both via api.kcalsion.com (keys in .env).
+#   OLLAMA_API_KEY       → qwen3.6:35b-a3b chat
+#   OLLAMA_EMBED_API_KEY → bge-m3 embeddings
+kcalsion_gateway:
+  provider: openai
+  base_url: https://api.kcalsion.com/v1
+  llm_model: qwen3.6:35b-a3b
+  embed_provider: openai
+  embed_base_url: https://api.kcalsion.com/v1
+  embed_model: bge-m3
+  embed_dim: 1024
+  temperature: 0.1
+  num_ctx: 8192
+  reranker:
+    enabled: true
+    model: bge-reranker-v2-m3
+
+# ForgeNode — unified chat + /v1/embeddings + /v1/rerank on forge.kcalsion.com.
+# Set in .env:
+#   LLM_PROFILE=forge_remote
+#   FORGE_BASE_URL=https://forge.kcalsion.com
+#   FORGE_API_KEY=replace-with-your-forge-chat-key
+#   FORGE_EMBED_API_KEY=replace-with-your-forge-embed-key
+forge_remote:
+  provider: openai
+  base_url: https://forge.kcalsion.com/v1
+  llm_model: qwen3.6:35b-a3b
+  embed_provider: forge
+  embed_model: bge-m3
+  sparse_embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0.1
+  num_ctx: 8192
+  max_tokens: 768
+  reranker:
+    enabled: true
+    backend: forge
+    model: Qwen/Qwen3-Reranker-0.6B
+
+# KKU gateway (gen.ai.kku.ac.th) — OpenAI-compatible. CHAT swapped to Google
+# gemini-2.5-flash: measured ~1-2s/call and 10 concurrent in ~2.4s total, vs
+# qwen3.6:35b on forge at ~20s single / timing out at 3 concurrent. Embeddings +
+# reranker stay on ForgeNode so the existing 1024-dim bge-m3 Qdrant vectors are
+# untouched (no re-ingest needed). Set in .env:
+#   LLM_PROFILE=kku_gemini
+#   KKU_API_KEY=sk-...            (chat key; kept out of this tracked file)
+# Note: the gateway enforces a per-key DAILY TOKEN QUOTA (~350k tokens/day
+# observed) — watch usage under heavy RAG load.
+kku_gemini:
+  provider: openai
+  # gemini-2.5-flash hit the KKU daily token limit; deepseek-v4-flash is the
+  # available stand-in with quota (the 40-question benchmark ran on this).
+  # 17 Jul replay findings: deepseek-v4-flash is CORRECT and 5-17s/call as long
+  # as reasoning_effort is NOT forced to "none" (that hack made it stall 90s+
+  # or deny evidence — see llm_reasoning_effort in config.py). qwen3.6-flash /
+  # qwen3.7-plus on THIS gateway stall the same way even at default reasoning —
+  # do not switch to them. Fastest verified alternates if deepseek quota dies:
+  # gemini-2.5-flash (1.6-3.6s) and gpt-5.4-mini (1.6-6.1s), both correct on
+  # the replay cases; gemini shares the vision pipeline's daily quota.
+  base_url: https://gen.ai.kku.ac.th/api/v1
+  llm_model: deepseek-v4-flash
+  api_key: ${KKU_API_KEY}
+  # Was embed_provider: forge — forge.kcalsion.com went down (Cloudflare 502)
+  # and ForgeRemoteEmbeddings has no fallback, so every dense query failed.
+  # sentence_transformers uses the resilient ladder (Forge when up → Jetson GPU
+  # sidecar → CPU). Qdrant payloads were migrated to the matching lineage
+  # string BAAI/bge-m3@sentence_transformers#1024 (vectors are identical bge-m3).
+  embed_provider: sentence_transformers
+  embed_model: BAAI/bge-m3
+  sparse_embed_model: BAAI/bge-m3
+  embed_dim: 1024
+  temperature: 0.1
+  num_ctx: 8192
+  max_tokens: 1024
+  reranker:
+    enabled: true
+    backend: forge
+    model: Qwen/Qwen3-Reranker-0.6B

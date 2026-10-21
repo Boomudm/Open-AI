@@ -1,0 +1,88 @@
+name: Nightly app-layer load
+
+# Manual only — nightly disabled
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: nightly-app-load-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  load-smoke:
+    name: App layer load smoke
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: spark
+          POSTGRES_PASSWORD: sparkpass
+          POSTGRES_DB: spark_db
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U spark -d spark_db"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5433"
+      POSTGRES_USER: spark
+      POSTGRES_PASSWORD: sparkpass
+      POSTGRES_DB: spark_db
+      REDIS_URL: redis://localhost:6379/0
+      SPARK_PROFILE: test
+      AUDIT_EXPORT_HMAC_SECRET: ci-test-hmac-secret
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Sync Python dependencies
+        run: uv sync --extra dev
+
+      - name: Migrate database
+        run: uv run alembic upgrade head
+
+      - name: Start API (background)
+        run: |
+          uv run uvicorn spark.main:app --host 127.0.0.1 --port 8000 --app-dir src &
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:8000/healthz >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "API failed to start"
+          exit 1
+
+      - name: Run load smoke
+        run: |
+          uv run python scripts/load/app_layer_smoke.py --base-url http://127.0.0.1:8000 --scenario healthz
+          TOKEN=$(curl -sf -X POST http://127.0.0.1:8000/api/v1/auth/login \
+            -H 'Content-Type: application/json' \
+            -d '{"username":"admin","password":"changeme"}' | python3 -c "import sys,json; print(json.load(sys.stdin).get('token',''))")
+          if [ -n "$TOKEN" ]; then
+            SMOKE_BEARER_TOKEN="$TOKEN" uv run python scripts/load/app_layer_smoke.py \
+              --base-url http://127.0.0.1:8000 --scenario sse-rest --sse-count 20 --rest-rounds 2
+            SMOKE_BEARER_TOKEN="$TOKEN" uv run python scripts/load/app_layer_smoke.py \
+              --base-url http://127.0.0.1:8000 --scenario ticket-mint --ticket-mints 20
+          else
+            echo "WARN: could not mint smoke token — skipping SSE/ticket scenarios"
+          fi

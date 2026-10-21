@@ -1,0 +1,102 @@
+# Remediation phase release gates — map phase → pytest + eval + thresholds.
+# Used by scripts/remediation_phase_gate.py (--phase N reads this file).
+
+phases:
+  "0":
+    description: Constitution, contract tests, production profile guard
+    contract_tests: true
+
+  "1":
+    description: Config truth, dead path removal
+    contract_tests: true
+    pytest:
+      - tests/contracts/test_import_spine.py
+
+  "2":
+    description: Ingest trust boundary, quarantine-before-embed
+    contract_tests: true
+    pytest:
+      - tests/test_ingest_content_policy.py
+
+  "3":
+    description: Ingest pipeline orchestrator, dedup, DLQ
+    contract_tests: true
+    pytest:
+      - tests/test_ingest_error_classification.py
+
+  "4":
+    description: Parse/chunk/embed quality
+    contract_tests: true
+    pytest:
+      - tests/test_parse_chunk_quality.py
+
+  "5":
+    description: Vector store schema, lineage, reconcile
+    contract_tests: true
+    pytest:
+      - tests/contracts/test_vector_consistency_contract.py
+
+  "6":
+    description: Lexical engine rewrite
+    contract_tests: true
+    eval: configs/eval/lexical_baseline.yaml
+    thresholds:
+      overall_case_pass_pct: 90
+
+  "7":
+    description: Retrieval core, fusion, degradation
+    contract_tests: true
+    eval: configs/eval/baseline_ci.yaml
+    thresholds:
+      overall_case_pass_pct: 75
+
+  "8":
+    description: RAG safety guardrails, rerank gates
+    contract_tests: true
+    eval: configs/eval/adversarial.yaml
+    thresholds:
+      overall_case_pass_pct: 100
+      rag_answer_correctness_pct: 100
+
+  "9":
+    description: Circuit breaker, streaming parity, grounding
+    contract_tests: true
+    pytest:
+      - tests/test_rag_stream_circuit_open.py
+    eval: configs/eval/grounding.yaml
+    thresholds:
+      overall_case_pass_pct: 75
+
+  "10":
+    description: Extractive-first generation, span citations
+    contract_tests: true
+    eval: configs/eval/grounding.yaml
+    thresholds:
+      overall_case_pass_pct: 75
+
+  "11":
+    description: Multiturn session slots, revision filter
+    contract_tests: true
+    pytest:
+      - tests/test_multiturn_phase11.py
+
+  "12":
+    description: Adversarial eval, release gates, prod lock
+    contract_tests: true
+    pytest:
+      - tests/test_rag_stream_circuit_open.py
+    eval: configs/eval/adversarial.yaml
+    thresholds:
+      overall_case_pass_pct: 100
+      rag_answer_correctness_pct: 100
+
+  "13":
+    description: Legacy teardown, import spine, cutover docs
+    contract_tests: true
+    pytest:
+      - tests/contracts/test_import_spine.py
+      - tests/contracts/test_legacy_teardown_contract.py
+    eval: configs/eval/adversarial.yaml
+    eval_secondary: configs/eval/safety_critical.yaml
+    thresholds:
+      overall_case_pass_pct: 100

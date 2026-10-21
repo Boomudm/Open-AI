@@ -1,0 +1,2 @@
+# Canonical path: configs/eval/adversarial.yaml
+include: eval/adversarial.yaml

@@ -1,0 +1,49 @@
+# Production lock manifest v3 — validated at startup for non-test SPARK_PROFILE.
+# Supersedes configs/production_lock_v2.yaml (remediation_blueprint_v3 Phase 13).
+
+version: 3
+
+required:
+  ingest_policy_enabled: true
+  rag_circuit_enabled: true
+  query_rewrite_enabled: true
+  extractive_first_for_safety_types: false
+  extractive_first_for_procedure: false
+  sparse_vectors_enabled: true
+  lexical_engine: postgres_thai_v3
+  sparse_encoder: bge_m3
+  mandatory_factory_id: true
+  unknown_ingest_error: permanent
+  layout_parser: docling
+  ml_classifier_enabled: true
+  require_gpu_rerank: true
+  partial_swap_allowed: false
+  degraded_rerank_policy: rank_gate
+
+enforcement:
+  mandatory_factory_id: true
+  sparse_encoder: true
+  require_gpu_rerank: true
+
+forbidden_env:
+  - SPARK_SEED_SKIP_EMBED
+  - RAG_DISABLE_SAFETY
+  - SPARK_STREAM_LIVE_TOKENS
+
+app_layer:
+  require_redis: true
+  require_fail_closed_auth: true
+  require_trust_ui_mapping: true
+  min_api_workers: 2
+
+# App-layer remediation v2 (remediation_blueprint_app_layerv2 Phase 12)
+app_layer_v2:
+  require_dual_admission: true
+  require_ticket_freshness_check: true
+  require_sse_connection_governor: true
+  require_atomic_redis_pop: true
+  require_stream_completion_contract: true
+  min_sse_pool_size: 8
+  max_sse_per_user: 5
+  forbid_system_principal_outside_test: true
+  require_audit_export_hmac: true

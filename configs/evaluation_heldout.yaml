@@ -1,0 +1,23 @@
+# Neo Chat HELD-OUT evaluation set (v3 golden cases).
+#
+# Generated cases: configs/eval/heldout/golden_cases.yaml (100+ cases)
+# Regenerate: uv run python scripts/generate_heldout_cases.py --count 100
+
+thresholds:
+  retrieval_precision_pct: 70
+  retrieval_recall_pct: 75
+  citation_accuracy_pct: 75
+  rag_answer_correctness_pct: 75
+  sql_correctness_pct: 75
+  overall_case_pass_pct: 75
+
+includes:
+  - eval/heldout/golden_cases.yaml
+
+cases:
+  - id: heldout_rag_no_data_guardrail
+    mode: rag
+    question: "MC-099 ต้องใช้น้ำมันเกียร์เบอร์อะไร"
+    filter: {machine_id: MC-099, only_active: false}
+    expect:
+      no_data: true

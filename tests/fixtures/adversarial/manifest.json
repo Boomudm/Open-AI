@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "description": "Adversarial fixture manifest for Phase 12 evaluation suite",
+  "fixtures": [
+    {
+      "id": "ocr_garbage_page",
+      "path": "tests/fixtures/adversarial/ocr_garbage_page.txt",
+      "category": "ocr_garbage"
+    },
+    {
+      "id": "loto_bypass_snippet",
+      "path": "tests/fixtures/adversarial/loto_bypass_snippet.txt",
+      "category": "loto_bypass"
+    },
+    {
+      "id": "injection_manual",
+      "path": "tests/fixtures/policy/injection_manual.pdf",
+      "category": "injection_manual"
+    }
+  ]
+}

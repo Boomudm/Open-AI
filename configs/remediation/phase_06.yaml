@@ -1,0 +1,6 @@
+# Phase 6 — lexical-heavy baseline RAG cases
+phase: 6
+description: Kill Qdrant scroll; real lexical index
+contract_tests: true
+eval_subset: lexical_baseline
+eval_suite: baseline

@@ -1,0 +1,44 @@
+name: golden-real-docs-eval
+
+# Live-LLM+vision eval against the 5 real client documents (KSS_Manual.pdf,
+# Oriental_Servo_Manual.pdf, MAPPING.xlsx, mapping_diagram.pdf,
+# wiring_diagram.pdf) that back configs/eval/golden_real_docs.yaml.
+#
+# Manual/nightly only — same reasoning as nightly-rag-full.yml's
+# eval-full-llm-gpu job: this needs real embeddings + a real (vision-capable)
+# LLM to measure faithfulness, which is too slow/costly to gate every PR on.
+# Requires a self-hosted GPU runner with a live Postgres/Qdrant/Redis +
+# LLM stack already configured (same assumption as nightly-eval-production.sh)
+# and the 5 real documents available out-of-band via GOLDEN_REAL_DOCS_DIR —
+# they are gitignored (เอกสารจริง/) and must never be committed or made a
+# public CI artifact (KUKA/Oriental vendor manuals are copyrighted).
+on:
+  workflow_dispatch:
+
+jobs:
+  golden-real-docs:
+    runs-on: [self-hosted, gpu]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+
+      - name: Seed the 5 real documents
+        env:
+          GOLDEN_REAL_DOCS_DIR: ${{ secrets.GOLDEN_REAL_DOCS_DIR }}
+        run: uv run python scripts/seed_golden_real_docs.py --wait-timeout 1800
+
+      - name: Run golden_real_docs eval suite
+        run: >-
+          uv run python -m spark.eval.ci_eval_runner
+          --suite golden_real_docs
+          --threshold-file configs/eval/thresholds.yaml
+          --output-json reports/golden_real_docs_report.json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: golden-real-docs-report
+          path: reports/golden_real_docs_report.json
+          if-no-files-found: ignore
+          retention-days: 90

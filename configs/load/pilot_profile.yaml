@@ -1,0 +1,21 @@
+# Pilot-scale load profile — remediation v3 Phase 15 soak gate.
+
+version: 1
+
+ingest:
+  concurrent_jobs: 20
+  documents_per_hour: 200
+  max_pdf_pages: 500
+  slo_p95_seconds: 120
+  max_dlq_rate_pct: 1.0
+
+rag:
+  concurrent_queries: 100
+  qps_target: 50
+  duration_minutes: 60
+  slo_p95_seconds: 8.0
+  max_circuit_false_trip_pct: 0.0
+
+reporting:
+  output_dir: reports/load
+  require_signoff: true

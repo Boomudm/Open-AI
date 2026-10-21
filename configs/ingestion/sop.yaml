@@ -1,0 +1,34 @@
+document_type: sop
+document_category: knowledge
+parser: pdf
+default_route: qdrant
+
+# Thai-language SOPs have a reliable embedded text layer that pypdf reads
+# cleanly and completely. Docling's table/layout model shreds Thai glyphs into
+# per-cell fragments (e.g. "-500" becomes "-50|0", "อุณหภูมิ" loses its vowels)
+# and drops the narrative sections between tables — so procedure values became
+# unretrievable. Force the text-layer parser for this Thai document type.
+layout:
+  parser: fallback_pypdf
+
+required_metadata: [language]
+optional_metadata: [machine_id, revision, effective_date, procedure_id]
+
+chunking:
+  profile: sop_procedure_th
+  strategy: sop_procedure
+  chunk_size: 1200
+  chunk_overlap: 200
+
+embedding:
+  profile: default_th
+
+qdrant:
+  collection: spark_docs
+
+postgres:
+  registry_only: true
+
+dedup:
+  by: file_hash_sha256
+  strategy: reingest_replace

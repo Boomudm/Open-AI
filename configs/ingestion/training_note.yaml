@@ -1,0 +1,26 @@
+document_type: training_note
+document_category: knowledge
+parser: word
+default_route: qdrant
+
+required_metadata: [language]
+optional_metadata: [author, topic, machine_id]
+
+chunking:
+  profile: long_form_th
+  strategy: recursive
+  chunk_size: 1000
+  chunk_overlap: 150
+
+embedding:
+  profile: default_th
+
+qdrant:
+  collection: spark_docs
+
+postgres:
+  registry_only: true
+
+dedup:
+  by: file_hash_sha256
+  strategy: skip_if_exists

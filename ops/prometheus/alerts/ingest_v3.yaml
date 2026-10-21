@@ -1,0 +1,36 @@
+# Prometheus alert rules — ingest v3 (Phase 12)
+
+groups:
+  - name: spark_ingest_v3
+    rules:
+      - alert: IngestDlqRateHigh
+        expr: sum(rate(spark_ingest_dlq_total[5m])) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Ingest DLQ rate elevated
+
+      - alert: IngestQuarantineSpike
+        expr: sum(rate(spark_ingest_quarantine_total[15m])) > 0.2
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: Ingest quarantine rate spike
+
+      - alert: IngestQualitySloBreach
+        expr: sum(rate(spark_ingest_quality_slo_breach_total[15m])) > 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: Ingest quality SLO breach detected
+
+      - alert: IngestComputePoolBacklog
+        expr: max(spark_ingest_compute_pool_queue_depth) > 8
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Ingest compute pool queue depth high

@@ -1,0 +1,27 @@
+# AUTO-GENERATED from intent_weights_v2.yaml — do not edit by hand.
+# Regenerate: uv run python scripts/sync_retrieval_configs.py
+intents:
+  part_lookup:
+    min_max: 0.38
+    min_avg: 0.25
+  safety_loto:
+    min_max: 0.5
+    min_avg: 0.4
+  alarm_diagnostic:
+    min_max: 0.38
+    min_avg: 0.28
+  procedure:
+    min_max: 0.42
+    min_avg: 0.32
+  io_mapping:
+    min_max: 0.38
+    min_avg: 0.25
+  drawing:
+    min_max: 0.35
+    min_avg: 0.25
+  drawing_connectivity:
+    min_max: 0.35
+    min_avg: 0.25
+  general:
+    min_max: 0.35
+    min_avg: 0.25

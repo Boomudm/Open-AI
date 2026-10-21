@@ -1,0 +1,18 @@
+# RAG evaluation quality gates for CI.
+# The CI eval runner (`python -m spark.eval.ci_eval_runner`) enforces these
+# thresholds; PRs touching retrieval/generation must pass to merge.
+
+# Minimum average faithfulness (fraction of answer tokens grounded in cited spans).
+min_faithfulness: 0.70
+
+# Minimum average context recall (fraction of gold chunks present in retrieval).
+min_context_recall: 0.60
+
+# Minimum attribution accuracy (pass rate of per-case attribution checks).
+min_attribution_accuracy: 0.65
+
+# Minimum overall case pass rate.
+min_pass_rate: 0.75
+
+# Maximum tolerated forbidden-source violations (documents that must NOT appear).
+max_forbidden_source_violations: 0

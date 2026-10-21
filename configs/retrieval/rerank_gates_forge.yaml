@@ -1,0 +1,25 @@
+# Rerank gate thresholds tuned for ForgeNode Qwen3-Reranker-0.6B (/v1/rerank).
+# Scores are native relevance probabilities in [0, 1] — slightly lower than
+# bge-reranker-v2-m3 post-sigmoid gates in rerank_gates.yaml.
+intents:
+  part_lookup:
+    min_max: 0.33
+    min_avg: 0.22
+  safety_loto:
+    min_max: 0.45
+    min_avg: 0.35
+  alarm_diagnostic:
+    min_max: 0.33
+    min_avg: 0.24
+  procedure:
+    min_max: 0.37
+    min_avg: 0.28
+  io_mapping:
+    min_max: 0.33
+    min_avg: 0.22
+  drawing:
+    min_max: 0.30
+    min_avg: 0.22
+  general:
+    min_max: 0.30
+    min_avg: 0.22

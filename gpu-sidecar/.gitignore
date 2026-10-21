@@ -1,0 +1,5 @@
+# Host-local, not for git — recreated per-machine (see README.md):
+.venv/
+hf-cache/
+__pycache__/
+*.log

@@ -1,0 +1,46 @@
+# Cloudflare Tunnel — Neo Spark (Jetson on-prem)
+#
+# DNS: neospark.kcalsion.com → tunnel
+#      qdrant-neospark.kcalsion.com → tunnel (Qdrant dashboard; no app auth)
+# Install: cp to ~/.cloudflared/config.yml, then systemctl restart cloudflared
+#
+# IMPORTANT: route /api/* to the FastAPI backend directly. Proxying SSE through
+# Next.js rewrites causes ECONNRESET on long RAG streams (~60–90s).
+
+tunnel: TUNNEL_ID
+credentials-file: /home/jetson/.cloudflared/TUNNEL_ID.json
+
+ingress:
+  # Qdrant UI/API — hostname must be *.kcalsion.com (Universal SSL). Nested
+  # *.neospark.kcalsion.com will handshake-fail. Do not path-mount on neospark
+  # (dashboard assets/REST live at /dashboard and /collections).
+  - hostname: qdrant-neospark.kcalsion.com
+    service: http://localhost:6333
+  # Public API docs (Swagger / ReDoc / OpenAPI) — must hit FastAPI, not Next.js
+  # (Next would 307 → /login). Keep these ahead of the catch-all web rule.
+  # IMPORTANT: use /docs and /docs/* — NOT /docs*, which also matches /documents.
+  - hostname: neospark.kcalsion.com
+    path: /docs
+    service: http://localhost:8000
+  - hostname: neospark.kcalsion.com
+    path: /docs/*
+    service: http://localhost:8000
+  - hostname: neospark.kcalsion.com
+    path: /redoc
+    service: http://localhost:8000
+  - hostname: neospark.kcalsion.com
+    path: /redoc/*
+    service: http://localhost:8000
+  - hostname: neospark.kcalsion.com
+    path: /openapi.json
+    service: http://localhost:8000
+  # Next.js route — sets httpOnly session cookie after login (not on FastAPI).
+  - hostname: neospark.kcalsion.com
+    path: /api/auth/*
+    service: http://localhost:3000
+  - hostname: neospark.kcalsion.com
+    path: /api/*
+    service: http://localhost:8000
+  - hostname: neospark.kcalsion.com
+    service: http://localhost:3000
+  - service: http_status:404

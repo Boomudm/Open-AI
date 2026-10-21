@@ -1,0 +1,15 @@
+# Machine Manual — section hierarchy fixture (Phase 4)
+
+## Cooling System
+
+The cooling system maintains safe operating temperature for the servo drive unit.
+Inspect fan blades monthly for dust accumulation.
+
+### Fan Assembly
+
+Remove the front panel screws before accessing the fan assembly.
+Replace the filter element every 500 operating hours.
+
+## Electrical Safety
+
+Verify lockout tagout before servicing high-voltage terminals.

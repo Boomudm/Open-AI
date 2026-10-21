@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "embed_dim": 64,
+  "abstain_threshold": 0.38,
+  "exemplars": {
+    "procedure": [
+      "ขั้นตอนการซ่อมเครื่อง",
+      "how to replace the cooling fan belt",
+      "maintenance procedure step by step",
+      "วิธีบำรุงรักษาเครื่องจักร",
+      "install new bearing procedure"
+    ],
+    "alarm_diagnostic": [
+      "motor overheat temperature alarm",
+      "servo vibration fault symptom",
+      "error code diagnostic troubleshooting",
+      "เครื่องร้อนผิดปกติอุณหภูมิสูง",
+      "pressure leak alarm diagnostic"
+    ],
+    "general": [
+      "what is this machine used for",
+      "overview of production line",
+      "general information about factory",
+      "ข้อมูลทั่วไปของเครื่อง",
+      "describe the equipment"
+    ]
+  }
+}

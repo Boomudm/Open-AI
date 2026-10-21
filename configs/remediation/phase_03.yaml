@@ -1,0 +1,5 @@
+# Phase 3 — ingest reliability pipeline (stub)
+phase: 3
+description: Retries, dedup, alias, partial semantics
+contract_tests: true
+eval_subset: null

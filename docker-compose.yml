@@ -1,0 +1,131 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: spark_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-spark}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sparkpass}
+      POSTGRES_DB: ${POSTGRES_DB:-spark_db}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-spark} -d ${POSTGRES_DB:-spark_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
+  redis:
+    image: redis:7-alpine
+    container_name: spark_redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  qdrant:
+    image: qdrant/qdrant:v1.11.3
+    container_name: spark_qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      QDRANT__SERVICE__GRPC_PORT: 6334
+      QDRANT__STORAGE__ON_DISK_PAYLOAD: "true"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "bash -ec 'exec 3<>/dev/tcp/127.0.0.1/6333; printf \"GET /healthz HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n\" >&3; grep -q \"200 OK\" <&3'",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
+  minio:
+    image: minio/minio:latest
+    container_name: spark_minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-sparkminio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-sparkminio}
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  minio_init:
+    image: minio/mc:latest
+    container_name: spark_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 $${MINIO_ROOT_USER:-sparkminio} $${MINIO_ROOT_PASSWORD:-sparkminio} &&
+      mc mb local/$${S3_BUCKET:-spark-documents} --ignore-existing &&
+      mc anonymous set none local/$${S3_BUCKET:-spark-documents}
+      "
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-sparkminio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-sparkminio}
+      S3_BUCKET: ${S3_BUCKET:-spark-documents}
+
+  pg-backup:
+    image: prodrigestivill/postgres-backup-local:16
+    container_name: spark_pg_backup
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-spark_db}
+      POSTGRES_USER: ${POSTGRES_USER:-spark}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sparkpass}
+      SCHEDULE: "@daily"
+      BACKUP_KEEP_DAYS: 7
+      BACKUP_KEEP_WEEKS: 4
+      BACKUP_KEEP_MONTHS: 3
+      HEALTHCHECK_PORT: 8080
+    volumes:
+      - pg_backups:/backups
+
+volumes:
+  postgres_data:
+  redis_data:
+  qdrant_data:
+  minio_data:
+  pg_backups:

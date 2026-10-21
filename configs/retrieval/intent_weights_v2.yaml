@@ -1,0 +1,83 @@
+# Intent routing weight table — single source of truth (remediation v3 Phase 9).
+# Generates rerank_gates.yaml and degraded_fusion_floors.yaml via scripts/sync_retrieval_configs.py
+
+version: 2
+abstain_threshold: 0.38
+
+defaults:
+  dense_weight: 0.7
+  lexical_weight: 0.3
+  min_rerank_score: 0.35
+  min_rerank_avg: 0.25
+  min_raw_fusion: 0.18
+
+intents:
+  part_lookup:
+    dense_weight: 0.25
+    lexical_weight: 0.75
+    document_type_hint: knowledge_document
+    min_rerank_score: 0.38
+    min_rerank_avg: 0.25
+    min_raw_fusion: 0.20
+  safety_loto:
+    dense_weight: 0.5
+    lexical_weight: 0.5
+    document_type_hint: sop
+    min_rerank_score: 0.50
+    min_rerank_avg: 0.40
+    min_raw_fusion: 0.28
+    strict_document_type_filter: true
+  alarm_diagnostic:
+    dense_weight: 0.65
+    lexical_weight: 0.35
+    document_type_hint: machine_manual
+    min_rerank_score: 0.38
+    min_rerank_avg: 0.28
+    min_raw_fusion: 0.20
+  procedure:
+    dense_weight: 0.55
+    lexical_weight: 0.45
+    document_type_hint: machine_manual
+    min_rerank_score: 0.42
+    min_rerank_avg: 0.32
+    min_raw_fusion: 0.22
+  io_mapping:
+    # PLC/IO symlink tag lookups (e.g. "RES0.BELT_CALIB_SENSOR ต่อกับอะไร") —
+    # rows are structurally near-identical, so dense embeddings barely
+    # discriminate between them; the exact tag match lives in the lexical
+    # leg's boost_tokens overlap (tokenize_industrial.py PLC tag regex).
+    dense_weight: 0.15
+    lexical_weight: 0.85
+    document_type_hint: io_mapping
+    min_rerank_score: 0.38
+    min_rerank_avg: 0.25
+    min_raw_fusion: 0.20
+    strict_document_type_filter: true
+  drawing:
+    dense_weight: 0.25
+    lexical_weight: 0.75
+    document_type_hint: drawing
+    min_rerank_score: 0.35
+    min_rerank_avg: 0.25
+    min_raw_fusion: 0.18
+    strict_document_type_filter: true
+  drawing_connectivity:
+    # Wiring connectivity questions phrased without the word "diagram"
+    # ("M18 ต่อกับอะไร", "X1:5 ไปไหน", "ถ้า K1 เสีย กระทบอะไร") — router
+    # regex_drawing_connectivity. Same drawing rank-prior, but NOT strict:
+    # manuals can carry the answer too. Dense stays meaningful (0.4) because
+    # the vision analyses are Thai prose, while the tag itself rides the
+    # lexical leg via boost_tokens/exact terms.
+    dense_weight: 0.4
+    lexical_weight: 0.6
+    document_type_hint: drawing
+    min_rerank_score: 0.35
+    min_rerank_avg: 0.25
+    min_raw_fusion: 0.18
+    strict_document_type_filter: false
+  general:
+    dense_weight: 0.7
+    lexical_weight: 0.3
+    min_rerank_score: 0.35
+    min_rerank_avg: 0.25
+    min_raw_fusion: 0.18

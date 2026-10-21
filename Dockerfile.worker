@@ -1,0 +1,29 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential libpq-dev poppler-utils \
+    tesseract-ocr tesseract-ocr-eng tesseract-ocr-tha \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY pyproject.toml README.md ./
+COPY src ./src
+COPY configs ./configs
+
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir --retries 10 --timeout 120 \
+       --extra-index-url https://download.pytorch.org/whl/cpu \
+       .
+
+ENV PYTHONPATH=/app/src
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+RUN groupadd -r spark && useradd -r -g spark -d /app spark \
+    && mkdir -p /app/data /tmp/spark-ingest \
+    && chown -R spark:spark /app /tmp/spark-ingest
+
+USER spark
+
+CMD ["celery", "-A", "spark.workers.celery_app", "worker", "--loglevel=info", "--concurrency=1"]

@@ -1,0 +1,33 @@
+# Production lock manifest — validated at startup for non-test SPARK_PROFILE.
+# Remediation v2 Phase 5 — real BGE-M3 tokenizer sparse encoder.
+# Migration: superseded by configs/production_lock_v3.yaml in remediation_blueprint_v3 Phase 13.
+
+version: 2
+
+required:
+  ingest_policy_enabled: true
+  rag_circuit_enabled: true
+  query_rewrite_enabled: true
+  extractive_first_for_safety_types: false
+  extractive_first_for_procedure: false
+  sparse_vectors_enabled: true
+  lexical_engine: postgres_thai_v3
+  sparse_encoder: bge_m3
+  mandatory_factory_id: true
+  unknown_ingest_error: permanent
+  layout_parser: docling
+  ml_classifier_enabled: true
+
+enforcement:
+  mandatory_factory_id: true
+  sparse_encoder: true
+
+forbidden_env:
+  - SPARK_SEED_SKIP_EMBED
+  - RAG_DISABLE_SAFETY
+
+app_layer:
+  require_redis: true
+  require_fail_closed_auth: true
+  require_trust_ui_mapping: true
+  min_api_workers: 2

@@ -1,0 +1,5 @@
+# Phase 0 — principles, feature flags, contract tests (smoke)
+phase: 0
+description: Cross-phase standards and release gates
+contract_tests: true
+eval_subset: null

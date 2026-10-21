@@ -1,0 +1,19 @@
+[Unit]
+Description=Spark Next.js Frontend
+After=network.target
+
+[Service]
+Type=simple
+User=jetson
+WorkingDirectory=/mnt/nvme-data/spark-1/web/.next/standalone
+# JWT_SECRET for middleware + /api/auth/session (must match API .env)
+EnvironmentFile=-/mnt/nvme-data/spark-1/web/.env.local
+ExecStart=/home/jetson/.nvm/versions/node/v20.20.2/bin/node server.js
+Restart=always
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOSTNAME=0.0.0.0
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,82 @@
+document_type: drawing
+document_category: knowledge
+parser: pdf
+default_route: qdrant
+
+required_metadata: [language]
+optional_metadata: [machine_id, drawing_no, drawing_type, revision]
+
+chunking:
+  profile: parent_child_th
+  strategy: page_aware_parent_child
+  parent_chunk_size: 1800
+  parent_chunk_overlap: 150
+  child_chunk_size: 400
+  child_chunk_overlap: 80
+
+# Pages that are mostly vector line-art (schematics/wiring diagrams — real
+# text is often just a title block) get a vision-LLM description instead of
+# being silently accepted as "has enough text" from title-block boilerplate
+# alone. See src/spark/ingestion/parse/pdf_vector_density.py and
+# src/spark/ingestion/parsers/vision_diagram.py.
+#
+# Ceiling: the detailed circuit-by-circuit prompt produces a searchable
+# per-page analysis (device tags, readable terminals, net names, connection
+# tables) — it still cannot guarantee full wire-to-terminal connectivity from
+# the image. The citation always resolves back to the original page so a
+# human can confirm safety-relevant wiring directly.
+#
+# Served by the `vision_extract` profile in configs/llm_profiles.yaml
+# (KKU gemini-3-flash-preview, ~16s per page at 200 DPI). The in-flight clock
+# excludes semaphore queue wait, so timeout_seconds only needs to cover one
+# call, not the whole batch. See the note on max_concurrency below before
+# changing either knob — both are tied to which gateway the profile points at.
+vision:
+  enabled: true
+  llm_profile: vision_extract
+  # Tried in order when the primary returns an error or an empty answer. KKU's
+  # per-model *daily* budget dies for every page at once (401 "This model reached
+  # daily limit."), which once indexed a whole 14-sheet binder as blank pages, so
+  # the ladder ends on a different provider that the same quota cannot touch.
+  llm_profile_fallbacks:
+    - vision_extract_gpt      # gpt-5.4-mini  (KKU, ~3s/page)
+    - vision_extract_llama    # llama-4-maverick (KKU, ~5s/page)
+    - vision_extract_local    # qwen3-vl:4b (kcalsion — no KKU quota, weakest)
+  dpi: 200
+  # The vision_extract profile now points at KKU gemini-3-flash-preview (~16s per
+  # page, measured), not the Cloudflare-fronted kcalsion gateway. That removes the
+  # constraint this file used to carry: Cloudflare 524s any request with no
+  # response bytes for ~100s, and two concurrent image calls to kcalsion pushed
+  # prompt-eval past that limit, which is why max_concurrency was pinned to 1 and
+  # the timeout had to cover a multi-minute generation. KKU answers in seconds and
+  # is not behind that proxy, so a small fan-out is safe and 180s is ample headroom.
+  # (If this profile is ever pointed back at kcalsion, restore timeout 600 +
+  # max_concurrency 1 or every page will 524.)
+  timeout_seconds: 180
+  max_concurrency: 3
+  # Document-level chunks for multi-sheet binders (needs ≥2 parsed pages):
+  # a deterministic device→pages index plus one extra LLM call that
+  # synthesizes a whole-system overview — enables cross-page questions
+  # ("ถ้า M18 พังกระทบวงจรไหน", "ไล่สายทั้งระบบ"). Indexed as page 0.
+  document_synthesis: true
+  curve_density_trigger: 200
+  max_text_chars: 600
+
+embedding:
+  profile: default_th
+
+qdrant:
+  collection: spark_docs
+
+postgres:
+  registry_only: true
+
+dedup:
+  by: file_hash_sha256
+  strategy: reingest_replace
+
+budget:
+  max_pages: 2000
+  max_chunks: 50000
+  max_embed_tokens: 10000000
+  max_ocr_pages: 2000

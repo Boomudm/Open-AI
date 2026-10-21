@@ -1,0 +1,39 @@
+# Hot-reload overlay for rapid development iteration.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.dev-app.yml -f docker-compose.dev-hot.yml up -d
+#
+# What this does:
+#   - Mounts src/ and configs/ from the host into the running containers so
+#     code changes take effect WITHOUT rebuilding the image.
+#   - Enables uvicorn --reload for the API (auto-restarts on .py changes).
+#   - Celery worker picks up changes after:  docker restart spark_celery
+#     (takes ~2-3 s — far faster than a full rebuild).
+#
+# NOTE: do NOT use this overlay in production.
+
+services:
+  api:
+    volumes:
+      - ./src:/app/src
+      - ./configs:/app/configs
+      - ./models:/app/models:ro
+      - ./alembic:/app/alembic
+    command:
+      - uvicorn
+      - spark.main:app
+      - --host=0.0.0.0
+      - --port=8000
+      - --app-dir=src
+      - --reload
+      - --reload-dir=src
+
+  celery_worker:
+    volumes:
+      - ./src:/app/src
+      - ./configs:/app/configs
+
+  celery_beat:
+    volumes:
+      - ./src:/app/src
+      - ./configs:/app/configs

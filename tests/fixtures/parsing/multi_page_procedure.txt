@@ -1,0 +1,13 @@
+<!-- page 1 -->
+
+1. Shut down the machine and lock out power before maintenance.
+
+2. Remove the access panel on the left side of the servo cabinet.
+
+<!-- page 2 -->
+
+3. Inspect the cooling fan for dust buildup and bearing noise.
+
+4. Replace the fan filter if airflow is restricted.
+
+5. Reinstall the panel and verify operation before returning to production.

@@ -1,0 +1,8 @@
+# Remediation Phase 12 — adversarial suite runner config
+phase: 12
+description: Adversarial guardrail and trap cases
+suite: adversarial
+config: configs/eval/adversarial.yaml
+thresholds:
+  overall_case_pass_pct: 100
+  rag_answer_correctness_pct: 100

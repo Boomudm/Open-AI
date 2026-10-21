@@ -1,0 +1,11 @@
+Standard Operating Procedure — Bearing Lubrication
+
+1. Verify the machine is in maintenance mode.
+
+2. Locate the grease fitting on the main spindle bearing.
+
+3. Apply NLGI Grade 2 grease until clean grease appears at the relief port.
+
+4. Run the spindle at 500 RPM for two minutes to distribute lubricant.
+
+5. Record the service date in the maintenance log.

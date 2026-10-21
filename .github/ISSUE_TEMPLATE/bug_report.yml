@@ -1,0 +1,98 @@
+name: Bug report
+description: Report a defect with reproduction steps
+title: "fix(scope): "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Neo Chat. Search [existing issues](https://github.com/CPF-Chula-CEDT-2026/spark/issues) first.
+        For **security vulnerabilities**, use [Private Security Advisories](https://github.com/CPF-Chula-CEDT-2026/spark/security/advisories/new) instead.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Web UI (Next.js)
+        - API (FastAPI)
+        - RAG / chat
+        - Text-to-SQL / analytics
+        - Ingestion / Celery
+        - Auth / RBAC / IAM
+        - Deployment / Docker
+        - Observability
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Critical — safety, data leak, or production down
+        - High — major feature broken
+        - Medium — workaround exists
+        - Low — cosmetic / minor
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Clear description of the bug
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: |
+        1. Start stack with …
+        2. Navigate to …
+        3. See error …
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Branch/tag, OS, Docker vs local, relevant `.env` flags (no secrets)
+      placeholder: |
+        Branch: develop @ abc1234
+        OS: macOS / Ubuntu 22.04
+        APP_ENV: development
+        AUTH_REQUIRED: false
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / screenshots
+      description: API response, browser console, Celery worker output (redact tokens)
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and did not find a duplicate
+          required: true
+        - label: I redacted JWT tokens, passwords, and plant document content from this report
+          required: true

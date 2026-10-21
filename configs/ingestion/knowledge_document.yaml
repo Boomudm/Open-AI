@@ -1,0 +1,32 @@
+document_type: knowledge_document
+document_category: knowledge
+parser: auto
+default_route: qdrant
+
+required_metadata: [language]
+optional_metadata: [machine_id, revision, effective_date, topic, author]
+
+chunking:
+  profile: long_form_th
+  strategy: recursive
+  chunk_size: 1000
+  chunk_overlap: 150
+
+ocr:
+  lang: tha+eng
+  preprocess:
+    contrast: 1.2
+    deskew: false
+
+embedding:
+  profile: default_th
+
+qdrant:
+  collection: spark_docs
+
+postgres:
+  registry_only: true
+
+dedup:
+  by: file_hash_sha256
+  strategy: reingest_replace

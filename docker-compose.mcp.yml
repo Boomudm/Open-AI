@@ -1,0 +1,37 @@
+# Optional overlay — predictive-maintenance-mcp (Phase 2)
+#
+# Build the image from upstream first:
+#   git clone https://github.com/LGDiMaggio/predictive-maintenance-mcp.git
+#   cd predictive-maintenance-mcp && docker build -t spark-predictive-mcp:local .
+#
+# Then start with Neo Chat stack:
+#   docker compose -f docker-compose.yml -f docker-compose.mcp.yml up -d
+#
+# Neo Chat .env for production factory:
+#   PREDICTIVE_BACKEND=hybrid
+#   MCP_PREDICTIVE_URL=http://127.0.0.1:8100/mcp
+
+services:
+  predictive_mcp:
+    image: ${MCP_IMAGE_TAG:-spark-predictive-mcp:0.1.0}
+    container_name: spark_predictive_mcp
+    ports:
+      - "8100:8100"
+    environment:
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+    command:
+      - predictive-maintenance-mcp
+      - --transport
+      - streamable-http
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8100"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8100/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

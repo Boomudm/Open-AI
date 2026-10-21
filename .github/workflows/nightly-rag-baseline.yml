@@ -1,0 +1,99 @@
+name: nightly-rag-baseline
+
+# Manual only — nightly disabled
+on:
+  workflow_dispatch:
+
+jobs:
+  chat-routing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - run: uv run python scripts/evaluate_baseline.py --mode chat_routing
+
+  eval-deterministic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - run: |
+          uv run python scripts/evaluate_baseline.py \
+            --config configs/evaluation_baseline_ci.yaml \
+            --mode rag \
+            --deterministic-rag \
+            --no-fail
+
+  leakage-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - run: >-
+          uv run python scripts/eval_leakage_audit.py
+          --dev configs/evaluation_baseline.yaml
+          --holdout configs/evaluation_heldout.yaml
+
+  eval-adversarial:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - run: >-
+          uv run python scripts/evaluate_baseline.py
+          --suite adversarial
+          --deterministic-rag
+          --skip-requires-live-api
+          --require-answer-path
+          --json-output docs/eval-report-adversarial-nightly.json
+
+  eval-full-llm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - name: Full LLM baseline (when Ollama URL configured)
+        env:
+          OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
+          EVAL_PASS_THRESHOLD: "75"
+        run: |
+          if [[ -n "${OLLAMA_BASE_URL:-}" ]]; then
+            bash scripts/nightly-eval.sh
+          else
+            echo "OLLAMA_BASE_URL not set — run scripts/nightly-eval.sh on factory cron (see docs/kcalsion-go-live-checklist.md)."
+            exit 0
+          fi
+
+  eval-full-llm-gpu:
+    runs-on: [self-hosted, gpu]
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      startsWith(github.ref, 'refs/heads/release/') ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - name: Production-path LLM baseline on self-hosted GPU
+        env:
+          EVAL_PASS_THRESHOLD: "90.91"
+        run: bash scripts/nightly-eval-production.sh
+
+  eval-heldout-gpu:
+    runs-on: [self-hosted, gpu]
+    if: startsWith(github.ref, 'refs/heads/release/')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - name: Held-out eval on release branch
+        run: >-
+          uv run python scripts/evaluate_baseline.py
+          --suite heldout
+          --require-answer-path
+          --json-output docs/eval-report-heldout-nightly.json

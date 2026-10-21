@@ -1,0 +1,7 @@
+# Phase 8 — RAG safety and guardrail cases (subset of adversarial)
+phase: 8
+description: no_data guardrails and off-topic rejection
+config: configs/eval/adversarial.yaml
+thresholds:
+  overall_case_pass_pct: 100
+  rag_answer_correctness_pct: 100

@@ -1,0 +1,5 @@
+# Phase 5 — RAGFlow decoupling (stub)
+phase: 5
+description: Native-only default, adapter isolation
+contract_tests: true
+eval_subset: null

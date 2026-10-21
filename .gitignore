@@ -1,0 +1,99 @@
+# ── Local npm cache (monorepo root convenience scripts) ───────────────────────
+.npm-cache/
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+scripts/__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── Virtualenv ───────────────────────────────────────────────────────────────
+.venv/
+.venv-mcp/
+venv/
+env/
+
+# ── Local caches (see scripts/env_nvme_cache.sh) ─────────────────────────────
+.cache/
+
+# ── Env files ────────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+.env.kcalsion.server
+.env.kcalsion.local
+/deploy/.env.gpu3
+
+# ── IDE / OS ─────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+.DS_Store
+.cursor/
+.cursorignore
+.claudeignore
+
+# ── Alembic ──────────────────────────────────────────────────────────────────
+alembic/versions/*.pyc
+
+# ── Plant data (never commit factory documents) ──────────────────────────────
+/data/raw/
+/data/documents/
+/data/inbox/
+/data/machines/*.pdf
+/data/machines/*.xlsx
+/data/machines/*.xls
+/data/machines/*.docx
+/data/demo/*
+!data/demo/.gitkeep
+
+# ── Frontend ─────────────────────────────────────────────────────────────────
+web/node_modules/
+web/.next/
+# Stray root-owned build dir written by a container run with the wrong cwd
+web/web/
+web/out/
+web/.turbo/
+web/playwright-report/
+web/test-results/
+web/tsconfig.tsbuildinfo
+
+# ── Internal / local-only (not for public repo) ───────────────────────────────
+/ข้อมูล/
+/เอกสารจริง/
+
+# ── Local sidecar clones (upstream repos — do not commit) ───────────────────
+/ragflow/
+/predictive-maintenance-mcp/
+/DeepAnalyze/
+/dify/
+/anything-llm/
+
+# ── Legacy archive (workspace only) ──────────────────────────────────────────
+/legacy_v2/
+
+# ── Logs / runtime ───────────────────────────────────────────────────────────
+*.log
+celerybeat-schedule
+celerybeat.pid
+
+# TestSprite scratch (local QA tooling — not part of the product)
+testsprite_tests/
+
+# ── Local eval/load/QA reports (runtime artifacts — not for commit) ──────────
+reports/
+docs/eval-report-*.json
+
+# Neo Chat env secrets
+web/.env.local
+web/.env.production
+
+/ชุดทดสอบ/
+kku_key.txt
+temp/

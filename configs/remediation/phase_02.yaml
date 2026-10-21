@@ -1,0 +1,6 @@
+# Phase 2 adversarial injection + quarantine cases
+phase: 2
+description: Poisoning, quarantine, ingest policy
+contract_tests: true
+eval_subset: ingest_security
+eval_suite: adversarial

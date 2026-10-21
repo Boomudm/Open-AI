@@ -1,0 +1,93 @@
+# Golden question set built from the client's actual factory documents
+# (KSS_Manual.pdf, Oriental_Servo_Manual.pdf, wiring_diagram.pdf,
+# mapping_diagram.pdf, MAPPING.xlsx). Every expected fact below was verified
+# by reading the real source file directly — do not add cases from memory or
+# assumption.
+#
+# Run: uv run python -m spark.eval.ci_eval_runner --suite golden_real_docs
+# Requires the 5 real documents ingested into the running stack first.
+#
+# Cases tagged `blocked_by:` are expected to FAIL until that workstream ships
+# — keep them in the suite so the "before/after" delta is measurable, but
+# don't treat a red case there as a runner bug.
+
+cases:
+  # --- KSS_Manual.pdf (KUKA KR C5 micro robot controller manual) ---
+  - id: kss_t1_jog_velocity_limit
+    mode: rag
+    filter: {factory_id: F-GOLDEN}
+    question: "โหมด T1 ของหุ่นยนต์ KUKA KR C5 micro ความเร็ว jog สูงสุดเท่าไหร่"
+    expect:
+      answer_contains_any: ["250 mm/s", "250mm/s", "250"]
+      sources:
+        - {document_type: machine_manual, source_file_contains: "KSS", page: 41}
+
+  - id: kss_safe_input_on_voltage_range
+    mode: rag
+    filter: {factory_id: F-GOLDEN}
+    question: "safe input ของ KUKA KR C5 micro สถานะ ON คือช่วงแรงดันเท่าไหร่"
+    expect:
+      answer_contains_any: ["11 V", "11V", "30 V", "30V"]
+      sources:
+        - {document_type: machine_manual, source_file_contains: "KSS", page: 61}
+
+  # --- Oriental_Servo_Manual.pdf (Oriental Motor AZ Series driver) ---
+  - id: oriental_cn7_io_wire_gauge
+    mode: rag
+    filter: {factory_id: F-GOLDEN}
+    question: "การต่อ I/O signal ที่ CN7 ของ Oriental Motor driver ใช้สายไฟขนาดเท่าไหร่"
+    expect:
+      answer_contains_any: ["AWG24", "AWG 24", "AWG16", "0.2", "1.25"]
+      sources:
+        - {document_type: machine_manual, source_file_contains: "Oriental", page: 31}
+
+  # --- wiring_diagram.pdf — blocked on Workstream A (vision-based diagram ingestion) ---
+  - id: wiring_ee07_drawing_citation
+    mode: rag
+    filter: {factory_id: F-GOLDEN}
+    # blocked_by: workstream-A — today the real schematic content is vector
+    # line-art with no extractable text (see plan doc); expected to fail until
+    # the vision-extraction ingestion path ships. Kept here to quantify the gap.
+    question: "แบบไดอะแกรมไฟฟ้าเลขที่ EE-07 อยู่หน้าไหนของเอกสาร wiring diagram"
+    expect:
+      sources:
+        - {document_type: drawing, source_file_contains: "wiring_diagram", page: 1}
+
+  # --- MAPPING.xlsx / mapping_diagram.pdf (PLC I/O symlink table) ---
+  - id: io_mapping_exact_tag_one_sided
+    mode: rag
+    filter: {factory_id: F-GOLDEN}
+    question: "RES0.BELT_CALIB_SENSOR เป็นอุปกรณ์ประเภทอะไรและทำงานแบบไหน"
+    expect:
+      answer_contains_any: ["BOOL", "EcoRT_0", "Input"]
+      sources:
+        - {document_type: io_mapping, source_file_contains: "MAPPING"}
+
+  - id: io_mapping_exact_tag_two_sided
+    mode: rag
+    filter: {factory_id: F-GOLDEN}
+    question: "RES0.Belt_Control เชื่อมต่อไปที่ port อะไร"
+    expect:
+      answer_contains_any: ["EcoRT_0", "MODBUSRREG8", "Output"]
+      sources:
+        - {document_type: io_mapping, source_file_contains: "MAPPING"}
+
+  - id: io_mapping_pdf_text_corruption_regression
+    mode: rag
+    filter: {factory_id: F-GOLDEN}
+    # The PDF twin (mapping_diagram.pdf) has genuine upstream text-layer
+    # corruption on this exact tag (verified: renders as
+    # "RES0.FB_MANUAL_CONTROL_WATEERc_oERNTA_20", splicing in the next row's
+    # device tag). MAPPING.xlsx is the authoritative source and must not
+    # reproduce this corruption in the answer.
+    question: "RES0.FB_MANUAL_CONTROL_WATER_ENA2 คืออะไร"
+    expect:
+      answer_forbidden_contains: ["WATEERc", "oERNTA"]
+
+  # --- Adversarial / no-data guardrail ---
+  - id: adversarial_nonexistent_machine
+    mode: rag
+    question: "MC-999 ต้องตรวจสอบอะไรบ้างก่อนใช้งาน"
+    filter: {factory_id: F-GOLDEN, machine_id: "MC-999", only_active: false}
+    expect:
+      no_data: true

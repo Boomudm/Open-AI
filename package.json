@@ -1,0 +1,8 @@
+{
+  "name": "spark",
+  "private": true,
+  "scripts": {
+    "dev": "./scripts/dev.sh",
+    "dev:web": "cd web && npm run dev"
+  }
+}

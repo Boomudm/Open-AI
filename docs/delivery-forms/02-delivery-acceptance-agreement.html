@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>เอกสารสัญญาและใบรับมอบ — Neo Chat v1.0.0 | NEOCHAT-ACCEPT-2026-001</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #15202b;
+    --muted: #5a6577;
+    --line: #c5ceda;
+    --line-soft: #e8edf3;
+    --accent: #0a3550;
+    --accent-2: #1a5f7a;
+    --accent-soft: #e7f0f5;
+    --gold: #8a6d2b;
+    --gold-soft: #f7f1e3;
+    --paper: #fff;
+    --bg: #eef1f5;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 10.2pt; }
+  body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--bg);
+    font-family: "Sarabun", "IBM Plex Sans Thai", "Garuda", "Waree", sans-serif;
+    line-height: 1.42;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .sheet {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 10mm auto;
+    padding: 13mm 15mm 15mm;
+    background: var(--paper);
+    box-shadow: 0 2px 18px rgba(21, 32, 43, 0.09);
+    position: relative;
+  }
+  .sheet + .sheet { margin-top: 8mm; }
+  .sheet::after {
+    content: attr(data-page);
+    position: absolute;
+    bottom: 7mm;
+    right: 15mm;
+    font-size: 8pt;
+    color: var(--muted);
+  }
+  header.doc-head {
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+  .head-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .brand-mark {
+    font-size: 8pt;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    font-weight: 700;
+  }
+  h1 {
+    margin: 3px 0 0;
+    font-size: 15.5pt;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1.22;
+  }
+  .subtitle { margin: 3px 0 0; color: var(--muted); font-size: 9pt; }
+  .meta-box {
+    text-align: right;
+    font-size: 8pt;
+    color: var(--muted);
+    line-height: 1.5;
+    min-width: 52mm;
+  }
+  .meta-box strong { color: var(--ink); display: block; font-size: 8.5pt; }
+  .confidential {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--gold);
+    background: var(--gold-soft);
+    border: 1px solid #e0d2a8;
+    padding: 2px 7px;
+  }
+  .banner {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 7px 11px;
+    margin: 0 0 10px;
+    font-size: 8.8pt;
+  }
+  .banner.gold {
+    background: var(--gold-soft);
+    border-left-color: var(--gold);
+  }
+  h2 {
+    margin: 11px 0 5px;
+    font-size: 11pt;
+    color: var(--accent);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2px;
+    page-break-after: avoid;
+  }
+  h3 {
+    margin: 8px 0 3px;
+    font-size: 9.5pt;
+    color: var(--ink);
+    page-break-after: avoid;
+  }
+  p { margin: 0 0 5px; }
+  .parties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    margin-bottom: 6px;
+  }
+  .card {
+    border: 1px solid var(--line);
+    padding: 7px 9px;
+    background: #fcfdff;
+  }
+  .card .label {
+    font-size: 7.5pt;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 3px 0 8px;
+    font-size: 8.6pt;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 3.5px 5px;
+    vertical-align: top;
+    text-align: left;
+  }
+  th {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    font-size: 8pt;
+  }
+  tr:nth-child(even) td { background: #fafbfd; }
+  .cb {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border: 1.35px solid var(--ink);
+    margin-right: 3px;
+    vertical-align: -1px;
+    background: #fff;
+  }
+  ol.clauses, ul.compact {
+    margin: 3px 0 7px 1.15em;
+    padding: 0;
+  }
+  ol.clauses li, ul.compact li { margin: 2px 0; }
+  ol.clauses > li { margin-bottom: 4px; }
+  .fill {
+    display: inline-block;
+    min-width: 4em;
+    border-bottom: 1px dotted var(--muted);
+    height: 0.95em;
+  }
+  .fill.wide { min-width: 10em; }
+  .fill.xwide { min-width: 18em; }
+  .hl {
+    background: linear-gradient(180deg, transparent 60%, #fff3c4 60%);
+  }
+  .rights-box {
+    border: 1.5px solid var(--accent-2);
+    background: #f3f9fb;
+    padding: 8px 10px;
+    margin: 6px 0 8px;
+  }
+  .rights-box h3 {
+    margin-top: 0;
+    color: var(--accent-2);
+    border: none;
+  }
+  .sig-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .sig {
+    border: 1px solid var(--line);
+    padding: 10px 10px 6px;
+    min-height: 48mm;
+  }
+  .sig .role { font-size: 8pt; color: var(--muted); margin-bottom: 22px; font-weight: 600; }
+  .sig .line {
+    border-top: 1px solid var(--ink);
+    margin-top: 26px;
+    padding-top: 4px;
+    font-size: 8.5pt;
+  }
+  .footer-note {
+    margin-top: 8px;
+    font-size: 7.5pt;
+    color: var(--muted);
+    border-top: 1px solid var(--line-soft);
+    padding-top: 5px;
+  }
+  .cover-center {
+    text-align: center;
+    padding: 18mm 8mm 8mm;
+  }
+  .cover-center h1 { font-size: 20pt; margin: 10px 0 6px; }
+  .cover-seal {
+    display: inline-block;
+    margin: 14px 0 10px;
+    border: 2px solid var(--accent);
+    padding: 8px 18px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    font-size: 10pt;
+  }
+  .cover-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    text-align: left;
+    margin-top: 16mm;
+    font-size: 9pt;
+  }
+  .toolbar {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--accent); color: #fff;
+    padding: 8px 16px; font-size: 9.5pt;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  }
+  .toolbar a, .toolbar button {
+    color: #fff; background: transparent;
+    border: 1px solid rgba(255,255,255,0.45);
+    padding: 4px 10px; cursor: pointer;
+    font-family: inherit; font-size: 9pt; text-decoration: none;
+  }
+  .toolbar button:hover, .toolbar a:hover { background: rgba(255,255,255,0.12); }
+  @media print {
+    body { background: #fff; }
+    .sheet {
+      width: auto; min-height: auto; margin: 0;
+      padding: 10mm 12mm 13mm; box-shadow: none;
+      page-break-after: always;
+    }
+    .sheet:last-child { page-break-after: auto; }
+    .no-print { display: none !important; }
+  }
+  @page { size: A4; margin: 0; }
+</style>
+</head>
+<body>
+<div class="toolbar no-print">
+  <span>เอกสารสัญญาและใบรับมอบ Neo Chat · A4 · ข้อสงวนสิทธิ์ผู้ส่งมอบอยู่ในข้อ 7</span>
+  <span>
+    <a href="./01-client-acceptance-checklist.html">เปิดเช็คลิสต์</a>
+    <button type="button" onclick="window.print()">พิมพ์ / บันทึก PDF</button>
+  </span>
+</div>
+
+<!-- ===================== COVER ===================== -->
+<section class="sheet" data-page="หน้า 1 / 5 · หน้าปก">
+  <div class="cover-center">
+    <div class="brand-mark">CPF Center of Engineering Excellence · Neo Chat Delivery</div>
+    <div class="confidential">ลับ — สำหรับคู่สัญญาเท่านั้น (CONFIDENTIAL)</div>
+    <h1>เอกสารสัญญาและใบรับมอบระบบ<br />Neo Chat</h1>
+    <p class="subtitle" style="font-size:11pt;color:var(--ink)">
+      Formal Delivery &amp; Acceptance Agreement<br />
+      พร้อมข้อสงวนสิทธิ์ความรู้ ทักษะ แนวคิด และการนำไปใช้ใหม่โดยผู้ส่งมอบ
+    </p>
+    <div class="cover-seal">NEOCHAT-ACCEPT-2026-001</div>
+    <p style="margin-top:8px;font-size:10pt">
+      ผลิตภัณฑ์: <strong>Neo Chat v1.0.0</strong><br />
+      จุดอ้างอิงซอฟต์แวร์: git tag <code>v1.0.0</code> · commit <code>b9c9436</code> · สาขา <code>main</code><br />
+      อ้างอิงชุดเอกสาร: <strong>NEOCHAT-DELIVERY-2026-001</strong><br />
+      เช็คลิสต์ประกอบ: <strong>NEOCHAT-CHECKLIST-2026-001</strong>
+    </p>
+    <div class="cover-meta">
+      <div class="card">
+        <div class="label">ผู้ส่งมอบ</div>
+        <strong>นายนรินธร ยางงาม</strong><br />
+        Backend / AI Developer<br />
+        ศูนย์วิศวกรรมแห่งความเป็นเลิศ ซีพีเอฟ<br />
+        ศูนย์ซ่อมและพัฒนาเครื่องจักรด้านวิศวกรรมอาหารสำเร็จรูป<br />
+        tedd0781@gmail.com
+      </div>
+      <div class="card">
+        <div class="label">ผู้ว่าจ้าง / หน่วยงานรับมอบ</div>
+        องค์กร: <span class="fill xwide"></span><br />
+        หน่วยงาน: <span class="fill xwide"></span><br />
+        ผู้มีอำนาจลงนาม: <span class="fill wide"></span><br />
+        ตำแหน่ง: <span class="fill wide"></span><br />
+        สถานที่ลงนาม: <span class="fill wide"></span>
+      </div>
+    </div>
+    <p style="margin-top:14mm;font-size:9pt;color:var(--muted)">
+      วันที่จัดทำเอกสาร: 21 กรกฎาคม 2569 &nbsp;·&nbsp;
+      วันที่ส่งมอบตามแผน: 22 กรกฎาคม 2569 &nbsp;·&nbsp;
+      วันที่ลงนาม: ....... / ....... / ............
+    </p>
+  </div>
+  <p class="footer-note" style="position:absolute;bottom:14mm;left:15mm;right:15mm">
+    เอกสารฉบับนี้เป็นสัญญา/ใบรับมอบอย่างเป็นทางการระหว่างคู่สัญญาตามบริบทการส่งมอบผลงานในฐานะพนักงาน
+    · ไม่ใช่ใบแจ้งหนี้ · ไม่มีการเรียกเก็บค่าบริการแยกต่างหาก · ค่าตอบแทนรวมอยู่ในเงินเดือนผู้ส่งมอบแล้ว
+  </p>
+</section>
+
+<!-- ===================== PAGE 2 ===================== -->
+<section class="sheet" data-page="หน้า 2 / 5">
+  <header class="doc-head">
+    <div class="head-top">
+      <div>
+        <div class="brand-mark">Delivery &amp; Acceptance Agreement</div>
+        <h1>ข้อ 1–4 · คู่สัญญา · วัตถุประสงค์ · ขอบเขต · ตรวจรับ</h1>
+        <p class="subtitle">ยึดระบบจริง ณ จุดอ้างอิงเป็นข้อยุติ · ไม่ใช้เอกสารโฆษณาเป็นคำรับรอง</p>
+      </div>
+      <div class="meta-box">
+        <strong>NEOCHAT-ACCEPT-2026-001</strong>
+        v1.0 · ฉบับลงนามรับมอบ
+      </div>
+    </div>
+  </header>
+
+  <div class="banner">
+    <strong>บริบท:</strong> การส่งมอบนี้เป็นการส่งมอบผลงาน (work product) ที่จัดทำในระหว่างการปฏิบัติงานในฐานะพนักงาน
+    ให้แก่หน่วยงานเจ้าของงาน — มิใช่การขายโดยผู้ขายภายนอก คำว่า “ผู้ว่าจ้าง” ในเอกสารนี้หมายถึงหน่วยงานรับมอบตามบริบทการจ้างงาน
+  </div>
+
+  <h2>ข้อ 1. คู่สัญญา</h2>
+  <div class="parties">
+    <div class="card">
+      <div class="label">ฝ่ายที่หนึ่ง — ผู้ส่งมอบ</div>
+      <strong>นายนรินธร ยางงาม</strong><br />
+      ตำแหน่ง: Backend / AI Developer<br />
+      บทบาท: ผู้พัฒนาและผู้ส่งมอบระบบ Neo Chat<br />
+      อีเมล: tedd0781@gmail.com
+    </div>
+    <div class="card">
+      <div class="label">ฝ่ายที่สอง — ผู้ว่าจ้าง / ผู้รับมอบ</div>
+      องค์กร/หน่วยงาน: <span class="fill xwide"></span><br />
+      ผู้แทนผู้มีอำนาจ: <span class="fill wide"></span><br />
+      ตำแหน่ง: <span class="fill wide"></span><br />
+      ที่อยู่เอกสาร: <span class="fill xwide"></span>
+    </div>
+  </div>
+
+  <h2>ข้อ 2. วัตถุประสงค์และลำดับการตีความ</h2>
+  <ol class="clauses">
+    <li>กำหนดขอบเขต สิ่งที่ส่งมอบ เกณฑ์ตรวจรับ การรับประกัน ข้อยกเว้นความรับผิด และสิทธิที่คู่สัญญายอมรับร่วมกัน</li>
+    <li>ลำดับการตีความเมื่อข้อความขัดกัน:
+      <ol type="a">
+        <li>สัญญา/ใบสั่งงานทางธุรกิจที่ลงนามร่วมกัน (ถ้ามีและพูดถึงประเด็นนั้นโดยตรง)</li>
+        <li>ซอฟต์แวร์จริง ณ จุดอ้างอิง tag <code>v1.0.0</code> / commit <code>b9c9436</code></li>
+        <li>เอกสารฉบับนี้ + ชุด NEOCHAT-DELIVERY-2026-001 / HANDOVER</li>
+        <li>README, CHANGELOG, เอกสารอื่น, ข้อความโฆษณา — <strong>ไม่ใช่คำรับรองผูกพันโดยลำพัง</strong></li>
+      </ol>
+    </li>
+  </ol>
+
+  <h2>ข้อ 3. สิ่งที่ส่งมอบและขอบเขต</h2>
+  <table>
+    <thead><tr><th style="width:16%">ชั้น</th><th>สาระ</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>ส่งมอบแล้ว</strong></td>
+        <td>ซอร์สโค้ดและระบบ Neo Chat v1.0.0 ตาม DEL-01–DEL-08: API/UI, RAG/Chat, ingestion, security, admin, infra definitions, ชุดทดสอบ, เอกสารส่งมอบ</td>
+      </tr>
+      <tr>
+        <td><strong>บางส่วน</strong></td>
+        <td>ความสามารถที่พึ่งสิ่งที่ผู้ว่าจ้างจัดหา (LLM gateway, vision, GPU, Text-to-SQL, browser voice ฯลฯ) — ส่งมอบชั้นซอฟต์แวร์ แต่ความพร้อมจริงไม่รับประกันโดยผู้ส่งมอบ</td>
+      </tr>
+      <tr>
+        <td><strong>นอกขอบเขต</strong></td>
+        <td>Insights/Predictive/DeepAnalyze, Whisper server, legacy dashboard, Component surface, SLA 24/7, และงานที่ต้องทำเป็น change request — <span class="hl">ไม่ใช่ defect และไม่เป็นเงื่อนไขบล็อกการรับมอบ</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>รายละเอียดเต็มอยู่ในชุดเอกสารส่งมอบหมวดขอบเขต/ข้อจำกัด คู่สัญญายืนยันว่ารับทราบแล้วก่อนลงนาม</p>
+
+  <h2>ข้อ 4. การตรวจรับ</h2>
+  <ol class="clauses">
+    <li><strong>เกณฑ์บังคับ:</strong> AT-01 ถึง AT-05 ตามเช็คลิสต์ NEOCHAT-CHECKLIST-2026-001 / หมวดคุณภาพของชุดส่งมอบ — เป็นเกณฑ์เชิงวัตถุวิสัยที่ทำซ้ำได้</li>
+    <li><strong>หน้าต่างตรวจรับ:</strong> <span class="hl">3 วันทำการ</span> นับจากวันพร้อมตรวจรับ (ปฏิทินประเทศไทย เว้นแต่ตกลงเป็นลายลักษณ์อักษรเป็นอย่างอื่น)</li>
+    <li><strong>ปฏิเสธที่ชอบด้วยเงื่อนไข:</strong> ต้องเป็นลายลักษณ์อักษรภายในหน้าต่าง และระบุขั้นตอนทำซ้ำ สภาพแวดล้อม ผลจริง และเหตุที่อยู่ในขอบเขตส่งมอบ</li>
+    <li><strong>Deemed acceptance:</strong> หากครบหน้าต่างโดยไม่มีปฏิเสธที่ชอบด้วยเงื่อนไข ให้<span class="hl">ถือว่ารับมอบโดยสมบูรณ์ แม้ยังไม่ลงนามหน้านี้</span></li>
+    <li><strong>Deemed use:</strong> หากผู้ว่าจ้างนำไปใช้จริง/production ให้ถือว่ารับมอบส่วนที่นำไปใช้นั้นแล้ว</li>
+    <li><strong>รอบแก้ไข:</strong> ผู้ส่งมอบมีสิทธิ์แก้ defect ที่ชอบด้วยเงื่อนไขได้ <span class="hl">หนึ่งรอบ</span> ตามรายการปฏิเสธเดิม — ไม่เปิดประเด็นใหม่ในรอบนั้น</li>
+  </ol>
+  <p class="footer-note">หน้าถัดไป: การรับประกัน ความรับผิด และข้อสงวนสิทธิ์สำคัญของผู้ส่งมอบ</p>
+</section>
+
+<!-- ===================== PAGE 3 — RIGHTS (KEY) ===================== -->
+<section class="sheet" data-page="หน้า 3 / 5">
+  <header class="doc-head">
+    <div class="head-top">
+      <div>
+        <div class="brand-mark">Retained Rights · Know-how · Rebuild · Portfolio</div>
+        <h1>ข้อ 5–7 · รับประกัน · ความรับผิด · สิทธิที่ผู้ส่งมอบสงวนไว้</h1>
+        <p class="subtitle">ข้อ 7 เป็นสาระสำคัญที่คุ้มครองความรู้ ทักษะ แนวคิด และการนำไปใช้ใหม่</p>
+      </div>
+      <div class="meta-box">
+        <strong>NEOCHAT-ACCEPT-2026-001</strong>
+        ข้อได้เปรียบผู้ส่งมอบ
+      </div>
+    </div>
+  </header>
+
+  <h2>ข้อ 5. การรับประกันและการสนับสนุน</h2>
+  <table>
+    <tr><th style="width:28%">หัวข้อ</th><th>รายละเอียด</th></tr>
+    <tr><td>วันเริ่มรับประกัน</td><td>วันที่การตรวจรับมีผล (รวม deemed acceptance / deemed use / ลงนาม)</td></tr>
+    <tr><td>ระยะเวลารับประกัน</td><td><span class="hl">7 วัน</span> นับจากวันเริ่มรับประกัน</td></tr>
+    <tr><td>สิ่งที่คุ้มครอง</td><td>Defect ในขอบเขตที่ส่งมอบ ที่ทำซ้ำได้บนสภาพแวดล้อมที่เหมาะสม</td></tr>
+    <tr><td>การเยียวยา</td><td><span class="hl">Sole remedy</span> = แก้ไขโค้ด/คอนฟิก หรือออก patch ให้กลับสู่พฤติกรรมที่ส่งมอบ — ไม่มีเงินคืน ไม่รับประกันผลทางธุรกิจ</td></tr>
+    <tr><td>การสนับสนุน</td><td>Best-effort ในเวลาทำการ ถึงอย่างช้า <strong>31 กรกฎาคม 2569</strong> หรือสิ้นสุดรับประกัน (อย่างใดถึงก่อน) — ไม่มี SLA / on-call 24/7</td></tr>
+    <tr><td>งานนอกขอบเขต</td><td>ฟีเจอร์ใหม่ การทำให้ dead code มีชีวิต การปรับแต่งเฉพาะองค์กร = <span class="hl">change request</span> ต้องตกลงขอบเขต/เงื่อนไขใหม่ก่อนเริ่มงาน</td></tr>
+  </table>
+
+  <h2>ข้อ 6. ข้อยกเว้นและการจำกัดความรับผิด</h2>
+  <ol class="clauses">
+    <li>ผู้ส่งมอบไม่รับผิดโดยลำพังต่อ: LLM gateway/โควตา, เครือข่าย/TLS/infra ของผู้ว่าจ้าง, คุณภาพเอกสารโรงงาน, การตั้งค่า production ที่ไม่ harden, ของนอกขอบเขต/carve-out</li>
+    <li>คำตอบ AI เป็น <strong>decision-support</strong> — ผู้ใช้ต้องตรวจ citation ก่อนปฏิบัติ โดยเฉพาะงานความปลอดภัย/เครื่องจักร/LOTO ผู้ส่งมอบไม่รับผิดต่อผลตัดสินใจที่อาศัยคำตอบระบบ</li>
+    <li>ภายใต้ขอบเขตที่กฎหมายอนุญาต: <span class="hl">ตัดความเสียหายทางอ้อม สืบเนื่อง พิเศษ ขาดกำไร หยุดผลิต สูญเสียข้อมูล/ชื่อเสียง/โอกาส</span></li>
+    <li>เนื่องจากเป็นงานในฐานะพนักงานและ<strong>ไม่มีค่าจ้างแยก</strong> ความรับผิดของผู้ส่งมอบจำกัดเท่าที่ความสัมพันธ์นายจ้าง–ลูกจ้างและกฎหมายกำหนด — <strong>ไม่ใช้เพดานเป็นจำนวนเงิน</strong></li>
+    <li>เหตุสุดวิสัยและบริการภายนอกที่ระบบพึ่งพาอยู่นอกความรับผิดของผู้ส่งมอบ</li>
+  </ol>
+
+  <h2>ข้อ 7. ทรัพย์สินทางปัญญา และสิทธิที่ผู้ส่งมอบสงวนไว้ / ได้รับอนุญาต</h2>
+  <div class="banner gold">
+    <strong>หลักการคู่ขนาน:</strong> หน่วยงานรับมอบได้ระบบ Neo Chat ที่ส่งมอบตามจุดอ้างอิงเพื่อใช้งานภายในองค์กร
+    พร้อมกันนั้น ผู้ส่งมอบสงวนและได้รับอนุญาตอย่างชัดเจนซึ่งสิทธิในความรู้ ทักษะ แนวคิดทั่วไป และการนำไปใช้ใหม่ตามข้อนี้
+    — เพื่อไม่ให้การรับมอบถูกตีความว่าตัดสิทธิทางวิชาชีพของผู้ส่งมอบ
+  </div>
+
+  <h3>7.1 สิ่งที่หน่วยงานรับมอบได้รับ</h3>
+  <ol class="clauses">
+    <li>สิทธิใช้ ครอบครอง และดูแลระบบ Neo Chat v1.0.0 ที่ส่งมอบ (รวมซอร์ส ณ จุดอ้างอิง) เพื่อวัตถุประสงค์ภายในองค์กร ตาม LICENSE ของโครงการและระเบียบหน่วยงาน</li>
+    <li>ข้อมูลโรงงาน ความลับองค์กร credentials หลังโอน และเอกสารภายในที่นำเข้า ยังคงเป็นของผู้ว่าจ้าง</li>
+  </ol>
+
+  <div class="rights-box">
+    <h3>7.2 สิทธิที่ผู้ส่งมอบสงวนไว้และผู้ว่าจ้างอนุญาตโดยชัดแจ้ง <span style="font-weight:400;font-size:8.5pt;color:var(--muted)">(สาระสำคัญ)</span></h3>
+    <p>โดยการลงนาม ผู้ว่าจ้างรับทราบและ<strong>อนุญาต/ไม่คัดค้าน</strong> ให้ผู้ส่งมอบมีสิทธิต่อไปนี้ตลอดไป โดยไม่ต้องขออนุญาตเพิ่ม และโดยไม่คิดค่าตอบแทนเพิ่ม:</p>
+    <ol class="clauses">
+      <li><strong>ความรู้ ทักษะ และ know-how ทั่วไป</strong> — รวมเทคนิค RAG, สถาปัตยกรรมระบบ, แบบแผนการออกแบบ, วิธีทดสอบ, แนวปฏิบัติ DevOps/MLOps และทักษะวิชาชีพที่ได้จากการทำงาน ถือเป็นทุนวิชาชีพส่วนบุคคลของผู้ส่งมอบ</li>
+      <li><strong>สิทธิ rebuild / สร้างใหม่จากศูนย์</strong> — ผู้ส่งมอบมีสิทธิออกแบบ พัฒนา และส่งมอบระบบที่มีหน้าที่คล้ายคลึงหรือแข่งขันได้ สำหรับนายจ้างรายอื่น ลูกค้า งานประกวด งานแข่งขัน หรือโครงการส่วนตัว โดย<strong>ไม่คัดลอกซอร์สโค้ดเฉพาะของ Neo Chat</strong> และไม่ใช้ข้อมูลลับ/เอกสารโรงงานของผู้ว่าจ้าง</li>
+      <li><strong>สิทธิใช้แนวคิดและคอนเซ็ปต์</strong> — แนวคิด “ผู้ช่วยถาม-ตอบเอกสารโรงงานแบบ on-prem ที่อ้างอิงแหล่งที่มา” รวมรูปแบบผลิตภัณฑ์ โครงหน้าจอระดับแนวคิด และสถาปัตยกรรมระดับสูง นำไปเสนอในพอร์ตโฟลิโอ งานแข่ง งานสัมภาษณ์ หรือผลิตภัณฑ์ใหม่ได้</li>
+      <li><strong>สิทธิพอร์ตโฟลิโอ / นำเสนอผลงาน</strong> — อธิบายบทบาท ขอบเขตงาน สแต็กเทคโนโลยี แผนภาพสถาปัตยกรรมที่ไม่มีข้อมูลลับ และภาพหน้าจอที่ปิดบังข้อมูลโรงงาน/ข้อมูลส่วนบุคคล ได้ในเรซูเม่ เว็บส่วนตัว สัมภาษณ์ งานประกวด และสื่อวิชาชีพ</li>
+      <li><strong>สิทธิแสดงความเป็นผู้สร้าง (authorship credit)</strong> — อ้างอิงได้ว่าเป็นผู้พัฒนาหลัก/ผู้ส่งมอบ Neo Chat v1.0.0 ในบริบทวิชาชีพ โดยไม่เปิดเผยความลับองค์กร</li>
+      <li><strong>ทรัพย์สินที่มีอยู่ก่อน / เครื่องมือส่วนตัว</strong> — โค้ด ไลบรารี สคริปต์ โน้ต หรือเครื่องมือที่ผู้ส่งมอบมีอยู่ก่อน หรือสร้างขึ้นนอกขอบเขตงานเฉพาะของหน่วยงาน และไม่ได้ฝังความลับของผู้ว่าจ้าง ยังเป็นของผู้ส่งมอบ</li>
+      <li><strong>ไม่สร้างข้อห้ามแข่งขันจากเอกสารนี้</strong> — การลงนามรับมอบ<strong>ไม่ถือเป็น</strong>สัญญาห้ามประกอบอาชีพ ห้ามทำงานแข่ง หรือห้ามพัฒนาผลิตภัณฑ์คล้ายกัน เกินกว่าที่กฎหมายหรือสัญญาจ้างงานฉบับอื่น (ถ้ามี) กำหนดไว้แล้วโดยชัดเจน</li>
+      <li><strong>งาน open-source / งานสาธารณะในอนาคต</strong> — ผู้ส่งมอบอาจเผยแพร่เฟรมเวิร์กหรือตัวอย่างทั่วไปที่สอนแนวคิดคล้ายกันได้ หากไม่เปิดเผยซอร์สเฉพาะของ Neo Chat ที่เป็นความลับ และไม่เปิดเผยข้อมูลโรงงาน</li>
+    </ol>
+  </div>
+
+  <h3>7.3 สิ่งที่ผู้ส่งมอบตกลงไม่ทำ</h3>
+  <ul class="compact">
+    <li>ไม่นำข้อมูลเอกสารโรงงาน ความลับ credentials หรือข้อมูลส่วนบุคคลของผู้ว่าจ้างไปใช้ภายนอก</li>
+    <li>ไม่เผยแพร่ซอร์สโค้ดเฉพาะของ Neo Chat ที่หน่วยงานถือเป็นความลับ โดยไม่ได้รับอนุญาตเป็นลายลักษณ์อักษร (เว้นแต่หน่วยงานทำให้เป็นสาธารณะเอง)</li>
+    <li>ไม่แอบอ้างว่าหน่วยงานรับรองผลิตภัณฑ์ใหม่ที่ผู้ส่งมอบสร้างภายหลัง</li>
+  </ul>
+  <p class="footer-note">ข้อ 7 มีผลแม้สัญญาจ้างงานจะสิ้นสุด และมีผลคู่ขนานกับ LICENSE ของที่เก็บโค้ด — หากข้อความทั่วไปใน LICENSE คลุมเครือในเรื่องสิทธิวิชาชีพของผู้ส่งมอบ ให้ยึดข้อ 7.2 เป็นการตีความร่วมกันของคู่สัญญาสำหรับประเด็นนั้น</p>
+</section>
+
+<!-- ===================== PAGE 4 ===================== -->
+<section class="sheet" data-page="หน้า 4 / 5">
+  <header class="doc-head">
+    <div class="head-top">
+      <div>
+        <div class="brand-mark">Credentials · Confidentiality · Certificate</div>
+        <h1>ข้อ 8–10 · ความลับ · คำรับรอง · ใบรับมอบ</h1>
+        <p class="subtitle">สรุปผลการตรวจรับและรายการรับทราบก่อนลงนาม</p>
+      </div>
+      <div class="meta-box">
+        <strong>NEOCHAT-ACCEPT-2026-001</strong>
+        ใบรับมอบอย่างเป็นทางการ
+      </div>
+    </div>
+  </header>
+
+  <h2>ข้อ 8. ความลับและการโอน Credentials</h2>
+  <ol class="clauses">
+    <li>เอกสารชุดนี้เป็นความลับระหว่างคู่สัญญา — ห้ามเผยแพร่ภายนอกโดยไม่ได้รับอนุญาตเป็นลายลักษณ์อักษร</li>
+    <li>ห้ามบันทึกค่าความลับลงในเอกสารนี้ · โอนผ่านช่องทางแยกตามเช็คลิสต์ข้อ 8</li>
+    <li>ผู้ว่าจ้างต้องหมุนความลับสำคัญหลังรับมอบ · หลังโอน/หมุนแล้ว ความรับผิดชอบเก็บรักษาเป็นของผู้ว่าจ้าง</li>
+  </ol>
+
+  <h2>ข้อ 9. คำรับรองก่อนลงนาม</h2>
+  <p>โดยการลงนาม คู่สัญญายืนยันอย่างน้อยดังนี้:</p>
+  <table>
+    <tr><td style="width:7%"><span class="cb"></span></td><td>ขอบเขต ส่งมอบ / บางส่วน / นอกขอบเขต ตามข้อ 3 และชุดเอกสารส่งมอบ</td></tr>
+    <tr><td><span class="cb"></span></td><td>เกณฑ์ AT-01–AT-05, หน้าต่าง 3 วันทำการ, deemed acceptance / deemed use ตามข้อ 4</td></tr>
+    <tr><td><span class="cb"></span></td><td>ข้อจำกัดและ dead code ที่เปิดเผยแล้วไม่ใช่ defect โดยปริยาย</td></tr>
+    <tr><td><span class="cb"></span></td><td>รับประกัน 7 วัน · sole remedy · ไม่มี SLA ตามข้อ 5</td></tr>
+    <tr><td><span class="cb"></span></td><td>ข้อยกเว้นความรับผิดและการตัดความเสียหายสืบเนื่องตามข้อ 6</td></tr>
+    <tr><td><span class="cb"></span></td><td><strong>สิทธิที่ผู้ส่งมอบสงวนไว้ตามข้อ 7.2</strong> (rebuild, แนวคิด, พอร์ตโฟลิโอ, know-how, ไม่สร้าง non-compete จากเอกสารนี้)</td></tr>
+    <tr><td><span class="cb"></span></td><td>การโอนความลับแยกช่องทางตามข้อ 8</td></tr>
+    <tr><td><span class="cb"></span></td><td>คำตอบ AI เป็น decision-support ต้องตรวจ citation ก่อนปฏิบัติ</td></tr>
+  </table>
+
+  <h2>ข้อ 10. ใบรับมอบ (Acceptance Certificate)</h2>
+  <table>
+    <tr><th style="width:32%">รายการ</th><th>ค่า</th></tr>
+    <tr><td>ผลิตภัณฑ์ / เวอร์ชัน</td><td>Neo Chat 1.0.0</td></tr>
+    <tr><td>Git tag / commit</td><td>v1.0.0 / b9c9436</td></tr>
+    <tr><td>วันพร้อมตรวจรับ</td><td>....... / ....... / ............</td></tr>
+    <tr><td>สิ้นสุดหน้าต่าง (+3 วันทำการ)</td><td>....... / ....... / ............</td></tr>
+    <tr><td>วันที่ลงนามรับมอบ</td><td>....... / ....... / ............</td></tr>
+    <tr><td>สถานที่ลงนาม</td><td><span class="fill xwide"></span></td></tr>
+  </table>
+
+  <h3>10.1 ผลการรับมอบ (เลือกหนึ่ง)</h3>
+  <table>
+    <tr><td style="width:7%"><span class="cb"></span></td><td><strong>รับมอบสมบูรณ์</strong></td></tr>
+    <tr><td><span class="cb"></span></td><td><strong>รับมอบมีเงื่อนไข</strong> — punch list ด้านล่าง ไม่ลบล้างส่วนที่ผ่านแล้ว</td></tr>
+    <tr><td><span class="cb"></span></td><td><strong>Deemed acceptance</strong> — ครบหน้าต่างโดยไม่มีปฏิเสธที่ชอบด้วยเงื่อนไข</td></tr>
+    <tr><td><span class="cb"></span></td><td><strong>Deemed use</strong> — นำไปใช้จริง/production แล้ว</td></tr>
+    <tr><td><span class="cb"></span></td><td><strong>ปฏิเสธ</strong> — มีหนังสือปฏิเสธที่ชอบด้วยเงื่อนไข (แนบแยก)</td></tr>
+  </table>
+
+  <h3>10.2 สรุป AT-*</h3>
+  <table>
+    <thead><tr><th>รหัส</th><th>ผล</th><th>วันที่</th></tr></thead>
+    <tbody>
+      <tr><td>AT-01 scripts/test.sh</td><td><span class="cb"></span>Pass <span class="cb"></span>Fail <span class="cb"></span>ไม่รัน</td><td>..../..../........</td></tr>
+      <tr><td>AT-02 contracts</td><td><span class="cb"></span>Pass <span class="cb"></span>Fail <span class="cb"></span>ไม่รัน</td><td>..../..../........</td></tr>
+      <tr><td>AT-03 Playwright</td><td><span class="cb"></span>Pass <span class="cb"></span>Fail <span class="cb"></span>ไม่รัน</td><td>..../..../........</td></tr>
+      <tr><td>AT-04 web unit</td><td><span class="cb"></span>Pass <span class="cb"></span>Fail <span class="cb"></span>ไม่รัน</td><td>..../..../........</td></tr>
+      <tr><td>AT-05 CI parity</td><td><span class="cb"></span>Pass <span class="cb"></span>Fail <span class="cb"></span>ไม่รัน</td><td>..../..../........</td></tr>
+    </tbody>
+  </table>
+
+  <h3>10.3 Punch list (ถ้ามี)</h3>
+  <table>
+    <thead><tr><th style="width:6%">#</th><th>รายการ</th><th style="width:18%">ประเภท</th><th style="width:16%">เจ้าของ</th><th style="width:14%">กำหนด</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>2</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>3</td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>10.4 วันรับประกัน</h3>
+  <table>
+    <tr><td style="width:40%">วันเริ่มรับประกัน</td><td>....... / ....... / ............</td></tr>
+    <tr><td>วันสิ้นสุดรับประกัน (+7 วัน)</td><td>....... / ....... / ............</td></tr>
+    <tr><td>สิ้นสุดการสนับสนุน</td><td>ไม่เกิน 31 กรกฎาคม 2569 หรือสิ้นสุดรับประกัน (อย่างใดถึงก่อน) เว้นแต่ขยายเป็นลายลักษณ์อักษร</td></tr>
+  </table>
+  <p class="footer-note">เตือน: หากไม่มีการปฏิเสธที่ชอบด้วยเงื่อนไขภายใน 3 วันทำการ ให้ถือว่ารับมอบแล้วแม้ยังไม่ลงนาม</p>
+</section>
+
+<!-- ===================== PAGE 5 — SIGNATURES ===================== -->
+<section class="sheet" data-page="หน้า 5 / 5">
+  <header class="doc-head">
+    <div class="head-top">
+      <div>
+        <div class="brand-mark">Signatures · Binding Acceptance</div>
+        <h1>ข้อ 11 · การลงนามมีผลผูกพัน</h1>
+        <p class="subtitle">ลงนามแล้วถือว่ายอมรับข้อ 1–10 รวมสิทธิข้อ 7.2 ของผู้ส่งมอบ</p>
+      </div>
+      <div class="meta-box">
+        <strong>NEOCHAT-ACCEPT-2026-001</strong>
+        หน้าลงนาม
+      </div>
+    </div>
+  </header>
+
+  <div class="banner">
+    เอกสารนี้อาจทำเป็นต้นฉบับสองฉบับ มีข้อความเดียวกัน คู่สัญญาเก็บฝ่ายละฉบับ
+    การลงนามด้วยลายมือชื่อหรือลายเซ็นอิเล็กทรอนิกส์ที่คู่สัญญายอมรับ มีผลผูกพันเท่ากัน
+  </div>
+
+  <h2>ข้อ 11.1 คำประกาศท้ายเอกสาร</h2>
+  <p>
+    คู่สัญญาได้อ่าน เข้าใจ และยอมรับเงื่อนไขในเอกสารนี้โดยครบถ้วนแล้ว รวมทั้ง
+    <span class="hl">สิทธิ rebuild / แนวคิด / พอร์ตโฟลิโอ / know-how / authorship</span>
+    ของผู้ส่งมอบตามข้อ 7.2 และยืนยันว่าการรับมอบระบบ Neo Chat v1.0.0 ไม่ตัดสิทธิทางวิชาชีพดังกล่าว
+  </p>
+
+  <div class="sig-grid">
+    <div class="sig">
+      <div class="role">ฝ่ายผู้ส่งมอบ</div>
+      <div class="line">
+        ลงชื่อ ..............................................<br /><br />
+        ชื่อตัวบรรจง: <strong>นายนรินธร ยางงาม</strong><br />
+        ตำแหน่ง: Backend / AI Developer<br />
+        องค์กร: ศูนย์วิศวกรรมแห่งความเป็นเลิศ ซีพีเอฟ<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ศูนย์ซ่อมและพัฒนาเครื่องจักรฯ<br />
+        วันที่: ....... / ....... / ............
+      </div>
+    </div>
+    <div class="sig">
+      <div class="role">ฝ่ายผู้ว่าจ้าง — ผู้มีอำนาจลงนามรับมอบ</div>
+      <div class="line">
+        ลงชื่อ ..............................................<br /><br />
+        ชื่อตัวบรรจง: ........................................<br />
+        ตำแหน่ง: ..............................................<br />
+        องค์กร/หน่วยงาน: ......................................<br />
+        &nbsp;<br />
+        วันที่: ....... / ....... / ............
+      </div>
+    </div>
+  </div>
+
+  <h2>ข้อ 11.2 พยาน (ถ้ามี)</h2>
+  <div class="sig-grid">
+    <div class="sig" style="min-height:36mm">
+      <div class="role">พยานฝ่ายผู้ส่งมอบ</div>
+      <div class="line">
+        ลงชื่อ ..............................................<br />
+        ชื่อ: .................................................<br />
+        วันที่: ....... / ....... / ............
+      </div>
+    </div>
+    <div class="sig" style="min-height:36mm">
+      <div class="role">พยานฝ่ายผู้ว่าจ้าง</div>
+      <div class="line">
+        ลงชื่อ ..............................................<br />
+        ชื่อ: .................................................<br />
+        วันที่: ....... / ....... / ............
+      </div>
+    </div>
+  </div>
+
+  <h2>ภาคผนวก ก — เอกสารที่ใช้อ้างอิงร่วม</h2>
+  <table>
+    <thead><tr><th>รหัส / ชื่อ</th><th>บทบาท</th></tr></thead>
+    <tbody>
+      <tr><td>NEOCHAT-DELIVERY-2026-001 (ชุดเอกสารส่งมอบ / Google Doc)</td><td>รายละเอียดขอบเขต คุณภาพ ข้อจำกัด</td></tr>
+      <tr><td>NEOCHAT-CHECKLIST-2026-001</td><td>เช็คลิสต์ให้ผู้ว่าจ้างติ๊กตรวจรับ</td></tr>
+      <tr><td>docs/DELIVERY_ACCEPTANCE.md · docs/HANDOVER.md</td><td>ฉบับในที่เก็บโค้ด / คู่มือเทคนิค</td></tr>
+      <tr><td>LICENSE (proprietary)</td><td>สถานะลิขสิทธิ์ซอฟต์แวร์ของโครงการ</td></tr>
+    </tbody>
+  </table>
+
+  <h2>ภาคผนวก ข — สรุปข้อได้เปรียบของผู้ส่งมอบ (สำหรับอ้างอิงเร็ว)</h2>
+  <table>
+    <thead><tr><th style="width:28%">หัวข้อ</th><th>ผลต่อผู้ส่งมอบ</th></tr></thead>
+    <tbody>
+      <tr><td>Deemed acceptance 3 วัน</td><td>ไม่ถูกดึงเรื่องรับมอบค้างโดยไม่มีปฏิเสธที่ชอบด้วยเงื่อนไข</td></tr>
+      <tr><td>รับประกัน 7 วัน + sole remedy</td><td>ภาระหลังส่งมอบสั้น ชัดเจน แก้โค้ดเป็นหลัก</td></tr>
+      <tr><td>Carve-out / นอกขอบเขต</td><td>กันการถูกบังคับทำฟีเจอร์ที่ไม่ได้ส่งมอบ</td></tr>
+      <tr><td>ตัดความเสียหายสืบเนื่อง</td><td>ลดความเสี่ยงความรับผิดทางอ้อม</td></tr>
+      <tr><td>ข้อ 7.2 rebuild / แนวคิด / พอร์ตโฟลิโอ</td><td><strong>เอาคอนเซ็ปต์ไปแข่ง ไปงานอื่น rebuild ได้โดยชอบ</strong></td></tr>
+      <tr><td>ไม่สร้าง non-compete จากเอกสารนี้</td><td>ไม่ถูกตีความว่าห้ามทำงานคล้ายกันเพียงเพราะรับมอบ</td></tr>
+      <tr><td>Change request</td><td>งานเพิ่มหลังรับมอบต้องตกลงใหม่</td></tr>
+    </tbody>
+  </table>
+
+  <p class="footer-note">
+    สิ้นสุดเอกสาร NEOCHAT-ACCEPT-2026-001 · พิมพ์บนกระดาษ A4 ·
+    เก็บคู่กับเช็คลิสต์ที่ติ๊กครบและชุดเอกสารส่งมอบ ·
+    เอกสารนี้จัดทำเพื่อการส่งมอบ Neo Chat v1.0.0 และคุ้มครองสิทธิทางวิชาชีพของผู้ส่งมอบอย่างชัดเจน
+  </p>
+</section>
+</body>
+</html>

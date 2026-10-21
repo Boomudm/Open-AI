@@ -1,0 +1,33 @@
+document_type: machine_manual
+document_category: knowledge
+parser: pdf
+default_route: qdrant
+
+# machine_id is optional (product decision 2026-07): forcing a machine pick at
+# upload 400'd the primary flow. Selecting one still scopes retrieval better.
+required_metadata: [language]
+optional_metadata: [machine_id, revision, manufacturer, model, effective_date]
+
+chunking:
+  profile: parent_child_th_v2
+  strategy: page_aware_parent_child
+
+embedding:
+  profile: default_th
+
+qdrant:
+  collection: spark_docs
+
+postgres:
+  registry_only: true
+
+dedup:
+  # reingest_replace: same file hash requeues on existing doc_id; generation swap replaces vectors.
+  by: file_hash_sha256
+  strategy: reingest_replace
+
+budget:
+  max_pages: 2000
+  max_chunks: 50000
+  max_embed_tokens: 10000000
+  max_ocr_pages: 2000

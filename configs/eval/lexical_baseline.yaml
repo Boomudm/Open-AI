@@ -1,0 +1,40 @@
+# Phase 6 lexical eval baseline — recall@k gates (requires ingested fixtures).
+schema_version: 1
+
+thresholds:
+  overall_case_pass_pct: 90
+  lexical_recall_at_10_pct: 88
+  industrial_recall_at_3_pct: 100
+
+cases:
+  - id: lexical_thai_procedure
+    mode: lexical
+    query: "ขั้นตอนการตรวจสอบพัดลมระบบทำความเย็น"
+    filters:
+      factory_id: f-01
+      document_type: machine_manual
+    expect:
+      top_k: 10
+      content_contains:
+        - "พัดลม"
+        - "ทำความเย็น"
+
+  - id: lexical_part_number_skf
+    mode: lexical
+    query: "SKF-6205"
+    filters:
+      factory_id: f-01
+    expect:
+      top_k: 3
+      content_contains:
+        - "6205"
+
+  - id: lexical_alarm_e204
+    mode: lexical
+    query: "E-204"
+    filters:
+      factory_id: f-01
+    expect:
+      top_k: 3
+      content_contains:
+        - "E-204"

@@ -1,0 +1,5 @@
+# Phase 1 — kill config lies and dead paths
+phase: 1
+description: Config schema validation, RAGFlow removal, lexical stub deletion
+contract_tests: true
+eval_subset: null

@@ -1,0 +1,5 @@
+# Phase 4 — ingest quality parsing (stub)
+phase: 4
+description: OCR gates, chunking parity, contextual headers
+contract_tests: true
+eval_subset: null

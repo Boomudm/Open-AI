@@ -1,0 +1,27 @@
+# Retrieval hardware profiles — recommended defaults per deployment shape.
+# Run `uv run python scripts/benchmark_retrieval_latency.py --profile <key>` to refresh.
+
+profiles:
+  cpu_default:
+    description: Single-node CPU rerank (no GPU)
+    rag_retrieve_multiplier: 3
+    rag_rerank_max_candidates: 48
+    rag_rerank_batch_size: 32
+    rag_rerank_device: cpu
+    target_p95_rerank_ms: 200
+
+  gpu_a10:
+    description: Dedicated GPU rerank worker (A10 / 24GB)
+    rag_retrieve_multiplier: 3
+    rag_rerank_max_candidates: 64
+    rag_rerank_batch_size: 64
+    rag_rerank_device: cuda
+    target_p95_rerank_ms: 150
+
+  gpu_l4:
+    description: Factory edge GPU (L4 / 16GB)
+    rag_retrieve_multiplier: 3
+    rag_rerank_max_candidates: 64
+    rag_rerank_batch_size: 128
+    rag_rerank_device: cuda
+    target_p95_rerank_ms: 120

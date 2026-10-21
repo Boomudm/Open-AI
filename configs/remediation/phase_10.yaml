@@ -1,0 +1,5 @@
+# Phase 10 — state multiturn revision (stub)
+phase: 10
+description: Query rewrite, revision logic, audit replay
+contract_tests: true
+eval_subset: null

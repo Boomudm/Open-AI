@@ -1,0 +1,8 @@
+# Phase 9 — citation and numeric grounding cases
+phase: 9
+description: Numeric traps and citation accuracy
+config: configs/eval/grounding.yaml
+thresholds:
+  overall_case_pass_pct: 75
+  citation_accuracy_pct: 75
+  rag_answer_correctness_pct: 75

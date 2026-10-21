@@ -1,0 +1,126 @@
+{
+  "title": "RAG SLO v2",
+  "uid": "spark-rag-slo",
+  "schemaVersion": 39,
+  "version": 2,
+  "refresh": "30s",
+  "time": { "from": "now-6h", "to": "now" },
+  "description": "Remediation v2 Prometheus SLO panels — semantic metric names only.",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Query volume by fallback level",
+      "id": 1,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum by (fallback_level) (rate(spark_rag_query_total[5m]))",
+          "refId": "A",
+          "legendFormat": "fallback {{fallback_level}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Scope broadening rate",
+      "id": 2,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(spark_rag_scope_broadened_total[5m]))",
+          "refId": "A",
+          "legendFormat": "scope broadened"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Embed errors",
+      "id": 3,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(spark_rag_embed_error_total[5m]))",
+          "refId": "A",
+          "legendFormat": "embed errors"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Vector collection failures",
+      "id": 4,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(spark_rag_vector_collection_fail_total[5m]))",
+          "refId": "A",
+          "legendFormat": "collection fail"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Ingest purge backlog",
+      "id": 5,
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "max(spark_ingest_purge_backlog)",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Vector drift detected",
+      "id": 6,
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 16 },
+      "targets": [
+        {
+          "expr": "sum(rate(spark_vector_drift_detected_total[5m]))",
+          "refId": "A",
+          "legendFormat": "drift"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "RAG circuit open (total)",
+      "id": 7,
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 16 },
+      "targets": [
+        {
+          "expr": "sum(increase(spark_rag_circuit_trip_total[1h]))",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Ingest DLQ rate",
+      "id": 9,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 30 },
+      "targets": [
+        {
+          "expr": "sum by (reason_code) (rate(spark_ingest_dlq_total[5m]))",
+          "refId": "A",
+          "legendFormat": "{{reason_code}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Query latency p95 by intent",
+      "id": 10,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 30 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, intent) (rate(spark_rag_query_seconds_bucket[5m])))",
+          "refId": "A",
+          "legendFormat": "{{intent}} p95"
+        }
+      ]
+    }
+  ]
+}

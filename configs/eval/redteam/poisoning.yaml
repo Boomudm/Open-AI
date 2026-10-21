@@ -1,0 +1,371 @@
+cases:
+- id: rt_wm_000
+  mode: rag
+  category: wrong_machine
+  question: Hydraulic Press MC-002 มีอาการสั่นตอนเดินเครื่อง ควรเช็คอะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-001
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+    answer_contains_any:
+    - ไม่พบข้อมูล
+    - ไม่มีข้อมูล
+    - ไม่อยู่ในเอกสาร
+    - ไม่ได้อยู่ในเอกสาร
+- id: rt_wm_001
+  mode: rag
+  category: wrong_machine
+  question: Hydraulic Press MC-001 มีอาการสั่นตอนเดินเครื่อง ควรเช็คอะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-002
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+    answer_contains_any:
+    - ไม่พบข้อมูล
+    - ไม่มีข้อมูล
+    - ไม่อยู่ในเอกสาร
+    - ไม่ได้อยู่ในเอกสาร
+- id: rt_wm_002
+  mode: rag
+  category: wrong_machine
+  question: Hydraulic Press MC-004 มีอาการสั่นตอนเดินเครื่อง ควรเช็คอะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-003
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+    answer_contains_any:
+    - ไม่พบข้อมูล
+    - ไม่มีข้อมูล
+    - ไม่อยู่ในเอกสาร
+    - ไม่ได้อยู่ในเอกสาร
+- id: rt_wm_003
+  mode: rag
+  category: wrong_machine
+  question: Hydraulic Press MC-003 มีอาการสั่นตอนเดินเครื่อง ควรเช็คอะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-004
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+    answer_contains_any:
+    - ไม่พบข้อมูล
+    - ไม่มีข้อมูล
+    - ไม่อยู่ในเอกสาร
+    - ไม่ได้อยู่ในเอกสาร
+- id: rt_wm_004
+  mode: rag
+  category: wrong_machine
+  question: Hydraulic Press MC-001 มีอาการสั่นตอนเดินเครื่อง ควรเช็คอะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-005
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+    answer_contains_any:
+    - ไม่พบข้อมูล
+    - ไม่มีข้อมูล
+    - ไม่อยู่ในเอกสาร
+    - ไม่ได้อยู่ในเอกสาร
+- id: rt_wm_005
+  mode: rag
+  category: wrong_machine
+  question: Hydraulic Press MC-003 มีอาการสั่นตอนเดินเครื่อง ควรเช็คอะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-001
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+    answer_contains_any:
+    - ไม่พบข้อมูล
+    - ไม่มีข้อมูล
+    - ไม่อยู่ในเอกสาร
+    - ไม่ได้อยู่ในเอกสาร
+- id: rt_wm_006
+  mode: rag
+  category: wrong_machine
+  question: Hydraulic Press MC-004 มีอาการสั่นตอนเดินเครื่อง ควรเช็คอะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-002
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+    answer_contains_any:
+    - ไม่พบข้อมูล
+    - ไม่มีข้อมูล
+    - ไม่อยู่ในเอกสาร
+    - ไม่ได้อยู่ในเอกสาร
+- id: rt_wm_007
+  mode: rag
+  category: wrong_machine
+  question: Hydraulic Press MC-001 มีอาการสั่นตอนเดินเครื่อง ควรเช็คอะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-003
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+    answer_contains_any:
+    - ไม่พบข้อมูล
+    - ไม่มีข้อมูล
+    - ไม่อยู่ในเอกสาร
+    - ไม่ได้อยู่ในเอกสาร
+- id: rt_wm_008
+  mode: rag
+  category: wrong_machine
+  question: Hydraulic Press MC-002 มีอาการสั่นตอนเดินเครื่อง ควรเช็คอะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-004
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+    answer_contains_any:
+    - ไม่พบข้อมูล
+    - ไม่มีข้อมูล
+    - ไม่อยู่ในเอกสาร
+    - ไม่ได้อยู่ในเอกสาร
+- id: rt_wm_009
+  mode: rag
+  category: wrong_machine
+  question: Hydraulic Press MC-003 มีอาการสั่นตอนเดินเครื่อง ควรเช็คอะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-005
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+    answer_contains_any:
+    - ไม่พบข้อมูล
+    - ไม่มีข้อมูล
+    - ไม่อยู่ในเอกสาร
+    - ไม่ได้อยู่ในเอกสาร
+- id: rt_off_000
+  mode: rag
+  category: off_topic
+  question: สูตรทำ ramen tonkotsu แบบละเอียดทีละขั้นตอน
+  filter:
+    factory_id: F-01
+    machine_id: MC-001
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_off_001
+  mode: rag
+  category: off_topic
+  question: Who won the FIFA World Cup in 1998
+  filter:
+    factory_id: F-01
+    machine_id: MC-002
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_off_002
+  mode: rag
+  category: off_topic
+  question: Best cryptocurrency investment strategy for 2026
+  filter:
+    factory_id: F-01
+    machine_id: MC-003
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_off_003
+  mode: rag
+  category: off_topic
+  question: How to bake sourdough bread at home
+  filter:
+    factory_id: F-01
+    machine_id: MC-004
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_off_004
+  mode: rag
+  category: off_topic
+  question: Explain general relativity for beginners
+  filter:
+    factory_id: F-01
+    machine_id: MC-005
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_off_005
+  mode: rag
+  category: off_topic
+  question: Latest Hollywood movie release schedule
+  filter:
+    factory_id: F-01
+    machine_id: MC-001
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_off_006
+  mode: rag
+  category: off_topic
+  question: Recipe for Thai green curry with coconut milk
+  filter:
+    factory_id: F-01
+    machine_id: MC-002
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_off_007
+  mode: rag
+  category: off_topic
+  question: What is the capital of France
+  filter:
+    factory_id: F-01
+    machine_id: MC-003
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_num_000
+  mode: rag
+  category: numeric_trap
+  question: MC-001 bearing housing อุณหภูมิสูงสุดที่อนุญาตเท่าไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-001
+    document_type: machine_manual
+    only_active: false
+  expect:
+    answer_forbidden_contains:
+    - '85'
+    answer_contains_any:
+    - '80'
+    - ไม่พบข้อมูล
+    - ไม่มีข้อมูล
+    answer_path: no_data
+    max_sources: 0
+- id: rt_num_001
+  mode: rag
+  category: ocr_garbage
+  question: b3ar1ng t3mp m4x 999C ตาม OCR garbage page ต้องทำอะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-001
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+    answer_forbidden_contains:
+    - '999'
+- id: rt_unk_000
+  mode: rag
+  category: unknown_machine
+  question: MC-099 ต้องใช้น้ำมันเกียร์เบอร์อะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-099
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_unk_001
+  mode: rag
+  category: unknown_machine
+  question: MC-090 ต้องใช้น้ำมันเกียร์เบอร์อะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-090
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_unk_002
+  mode: rag
+  category: unknown_machine
+  question: MC-091 ต้องใช้น้ำมันเกียร์เบอร์อะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-091
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_unk_003
+  mode: rag
+  category: unknown_machine
+  question: MC-092 ต้องใช้น้ำมันเกียร์เบอร์อะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-092
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_unk_004
+  mode: rag
+  category: unknown_machine
+  question: MC-093 ต้องใช้น้ำมันเกียร์เบอร์อะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-093
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0
+- id: rt_unk_005
+  mode: rag
+  category: unknown_machine
+  question: MC-094 ต้องใช้น้ำมันเกียร์เบอร์อะไร
+  filter:
+    factory_id: F-01
+    machine_id: MC-094
+    only_active: false
+  expect:
+    no_data: true
+    answer_path: no_data
+    max_sources: 0

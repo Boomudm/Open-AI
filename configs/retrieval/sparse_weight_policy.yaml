@@ -1,0 +1,9 @@
+# Sparse leg visibility policy — app-layer fusion (Phase 9).
+# Qdrant may fuse dense+sparse internally; this config drives feature logging
+# and documents the future tri-leg fusion extension point in fusion.py.
+
+version: 1
+log_sparse_contribution: true
+# Effective sparse weight when encoder active (remediation v4: tri-leg enabled).
+default_sparse_weight: 0.15
+future_tri_leg_fusion: true

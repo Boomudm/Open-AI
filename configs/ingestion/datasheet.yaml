@@ -1,0 +1,28 @@
+document_type: datasheet
+document_category: knowledge
+parser: pdf
+default_route: qdrant
+
+required_metadata: [language]
+optional_metadata: [manufacturer, model, part_number]
+
+chunking:
+  profile: parent_child_th
+  strategy: page_aware_parent_child
+  parent_chunk_size: 1800
+  parent_chunk_overlap: 150
+  child_chunk_size: 400
+  child_chunk_overlap: 80
+
+embedding:
+  profile: default_th
+
+qdrant:
+  collection: spark_docs
+
+postgres:
+  registry_only: true
+
+dedup:
+  by: file_hash_sha256
+  strategy: reingest_replace

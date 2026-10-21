@@ -1,0 +1,120 @@
+name: nightly-chaos-v3
+
+# Chaos + red-team + load soak gate — remediation v3 Phase 15.
+
+# Manual only — nightly disabled
+on:
+  workflow_dispatch:
+
+jobs:
+  chaos-tests:
+    name: Chaos test suite
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: spark
+          POSTGRES_PASSWORD: sparkpass
+          POSTGRES_DB: spark_db
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U spark -d spark_db"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5433"
+      POSTGRES_USER: spark
+      POSTGRES_PASSWORD: sparkpass
+      POSTGRES_DB: spark_db
+      REDIS_URL: redis://localhost:6379/0
+      SPARK_TESTING: "1"
+      SPARK_PROFILE: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --extra dev
+      - name: Run chaos tests
+        run: uv run pytest tests/chaos/ -q --tb=short -m chaos
+
+  redteam-eval:
+    name: Red-team eval + production lock v3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --extra dev
+      - name: Validate red-team case count
+        run: uv run python scripts/validate_redteam_suite.py --min-cases 50
+      - name: Evaluate adversarial + redteam
+        run: |
+          GIT_SHA=$(git rev-parse HEAD)
+          REPORT_DIR="reports/eval/${GIT_SHA}"
+          mkdir -p "$REPORT_DIR"
+          uv run python scripts/evaluate_baseline.py \
+            --suite adversarial \
+            --deterministic-rag \
+            --skip-requires-live-api \
+            --require-answer-path \
+            --json-output "$REPORT_DIR/adversarial.json"
+      - name: Strict production lock v3 outcome gate
+        run: |
+          GIT_SHA=$(git rev-parse HEAD)
+          uv run python scripts/validate_production_lock_v3.py \
+            --report-dir "reports/eval/${GIT_SHA}" \
+            --strict
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nightly-redteam-eval
+          path: reports/eval/
+          if-no-files-found: ignore
+          retention-days: 90
+
+  pilot-soak-dry-run:
+    name: Pilot soak (dry-run SLO gate)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --extra dev
+      - name: Run pilot soak dry-run
+        run: bash scripts/load/run_pilot_soak.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nightly-load-soak-reports
+          path: reports/load/
+          if-no-files-found: ignore
+          retention-days: 90
+
+  pilot-soak-gpu:
+    name: Pilot soak (live — self-hosted GPU)
+    runs-on: [self-hosted, gpu]
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev
+      - name: Live pilot soak
+        env:
+          DRY_RUN: "0"
+        run: bash scripts/load/run_pilot_soak.sh

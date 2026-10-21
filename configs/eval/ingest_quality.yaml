@@ -1,0 +1,22 @@
+# Ingest quality evaluation subset (Phase 4)
+schema_version: 1
+description: Chunk count bounds and header presence checks for parsing quality gates
+pytest:
+  - tests/test_parse_chunk_quality.py
+
+fixtures:
+  multi_page_procedure:
+    path: tests/fixtures/parsing/multi_page_procedure.txt
+    min_chunks: 1
+    max_chunks: 20
+    require_header_in_embed: true
+
+  word_sop:
+    path: tests/fixtures/parsing/word_sop_procedure.txt
+    min_chunks: 1
+    max_chunks: 30
+    parent_child: true
+
+thresholds:
+  ocr_index_min_confidence: 70.0
+  ocr_block_job_min_confidence: 50.0

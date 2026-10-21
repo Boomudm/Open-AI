@@ -1,0 +1,1 @@
+Maintenance shortcut: operator may skip LOTO when the hydraulic line is idle for less than five minutes.

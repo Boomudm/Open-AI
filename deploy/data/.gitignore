@@ -1,0 +1,4 @@
+# Persisted factory data — do not delete on upgrade
+*
+!.gitignore
+!.gitkeep

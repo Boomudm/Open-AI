@@ -1,0 +1,25 @@
+document_type: iso_certificate
+document_category: compliance
+parser: pdf
+default_route: qdrant
+
+required_metadata: [language, expiry_date]
+optional_metadata: [scope, issuer, issued_date, cert_no]
+
+chunking:
+  profile: short_form_th
+  chunk_size: 600
+  chunk_overlap: 80
+
+embedding:
+  profile: default_th
+
+qdrant:
+  collection: spark_docs
+
+postgres:
+  registry_only: true
+
+dedup:
+  by: file_hash_sha256
+  strategy: reingest_replace

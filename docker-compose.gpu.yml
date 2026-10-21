@@ -1,0 +1,22 @@
+# Optional GPU profile for cross-encoder rerank worker.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.gpu.yml up rerank-worker
+
+services:
+  rerank-worker:
+    profiles: ["gpu"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uv run celery -A spark.workers.celery_app worker -Q rerank -c 1 --loglevel=info
+    environment:
+      RAG_RERANK_DEVICE: cuda
+      RAG_RERANK_BATCH_SIZE: "64"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    depends_on:
+      - redis

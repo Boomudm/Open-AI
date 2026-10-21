@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: spark_api
+    metrics_path: /metrics
+    static_configs:
+      # host.docker.internal:8000 — Mac dev (api runs natively on host, scripts/dev.sh)
+      # api:8000 — Docker Compose deploys where api is a container on this project's network (e.g. kcalsion/Jetson)
+      - targets: ["host.docker.internal:8000", "api:8000"]
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

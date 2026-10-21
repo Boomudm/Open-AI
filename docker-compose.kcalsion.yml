@@ -1,0 +1,90 @@
+# kcalsion factory overlay — CPU 3, LLM gateway on host :9090, MinIO for documents
+#
+# Usage (do NOT include docker-compose.prod.yml — no GPU vLLM in Docker):
+#   docker compose \
+#     -f docker-compose.yml \
+#     -f docker-compose.factory.yml \
+#     -f docker-compose.kcalsion.yml \
+#     up -d --build
+#
+# Requires .env from .env.kcalsion.server (LLM_PROFILE=gemma, STORAGE_BACKEND=s3).
+# Chat model: qwen3.6:35b-a3b via host proxy :9090 (NVIDIA A16 on host).
+
+services:
+  api:
+    cpuset: "3"
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "api.kcalsion.com:172.67.201.93"
+      - "ssh.kcalsion.com:172.67.201.93"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+      QDRANT_HOST: qdrant
+      STORAGE_BACKEND: s3
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-sparkminio}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-sparkminio}
+      S3_BUCKET: ${S3_BUCKET:-spark-documents}
+      S3_REGION: ${S3_REGION:-ap-southeast-1}
+    volumes:
+      - ./data/raw:/app/data/raw
+      - ./data/agentic:/app/data/agentic
+    depends_on:
+      minio:
+        condition: service_healthy
+      minio_init:
+        condition: service_completed_successfully
+    healthcheck:
+      start_period: 45s
+
+  celery_worker:
+    cpuset: "3"
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "api.kcalsion.com:172.67.201.93"
+      - "ssh.kcalsion.com:172.67.201.93"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+      QDRANT_HOST: qdrant
+      STORAGE_BACKEND: s3
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_ACCESS_KEY: ${MINIO_ROOT_USER:-sparkminio}
+      S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-sparkminio}
+      S3_BUCKET: ${S3_BUCKET:-spark-documents}
+      S3_REGION: ${S3_REGION:-ap-southeast-1}
+    volumes:
+      - ./data/raw:/app/data/raw
+      - ./data/agentic:/app/data/agentic
+    depends_on:
+      minio:
+        condition: service_healthy
+      minio_init:
+        condition: service_completed_successfully
+
+  celery_beat:
+    cpuset: "3"
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      REDIS_URL: redis://redis:6379/0
+
+  web:
+    cpuset: "3"
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      NODE_ENV: production
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        NEXT_PUBLIC_SPARK_API_URL: ${NEXT_PUBLIC_SPARK_API_URL:-http://spark-api.lan}
+        NEXT_PUBLIC_PASSWORD_LOGIN: ${NEXT_PUBLIC_PASSWORD_LOGIN:-true}

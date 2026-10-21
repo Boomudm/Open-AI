@@ -1,0 +1,37 @@
+document_type: hr_handbook
+document_category: enterprise
+parser: pdf
+default_route: qdrant
+
+# Thai HR policy PDFs read cleanly and completely via the text-layer parser;
+# docling mangles Thai glyphs and drops narrative between tables. Use pypdf.
+layout:
+  parser: fallback_pypdf
+
+required_metadata: [language]
+optional_metadata: [revision, effective_date, sensitivity_level]
+
+chunking:
+  profile: parent_child_th_v2
+  strategy: page_aware_parent_child
+
+embedding:
+  profile: default_th
+
+qdrant:
+  collection: spark_enterprise_docs
+
+postgres:
+  registry_only: true
+
+dedup:
+  by: file_hash_sha256
+  strategy: reingest_replace
+
+budget:
+  max_pages: 500
+  max_chunks: 20000
+  max_embed_tokens: 5000000
+
+defaults:
+  sensitivity_level: confidential

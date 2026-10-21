@@ -1,0 +1,50 @@
+document_type: io_mapping
+document_category: knowledge
+parser: auto
+default_route: qdrant
+
+required_metadata: [language]
+optional_metadata: [machine_id, plc_name, revision]
+
+# Bilateral Symlink <-> Hardware-Port sheet: real header lives on the *second*
+# row (row index 1) — row 0 is a merged group label ("Symbolic Link Name" /
+# "Connected to (Hardware Ports)") that pandas would otherwise treat as the
+# column names, leaving every field as "Unnamed: N".
+header_row: 1
+
+sheet_selector:
+  required_headers_any_of:
+    - ["device", "type", "direction", "path"]
+
+column_map_by_index:
+  src_device: 0
+  src_type: 1
+  src_direction: 2
+  src_path: 3
+  tgt_device: 4
+  tgt_type: 5
+  tgt_direction: 6
+  tgt_path: 7
+  comment: 8
+
+narrative_template: "{src_device} ({src_type}, {src_direction}) at {src_path}{target_clause}.{comment_clause}"
+# Hundreds of rows in the real sheet have only the hardware-port half filled —
+# the main template would render "(, ) at  connects to ..." for those.
+narrative_template_tgt_only: "No symbolic link mapped in this row. Hardware port: {tgt_device} ({tgt_type}, {tgt_direction}) at {tgt_path}.{comment_clause}"
+
+chunking:
+  profile: table_row
+  strategy: table_row
+
+embedding:
+  profile: default_th
+
+qdrant:
+  collection: spark_docs
+
+postgres:
+  registry_only: true
+
+dedup:
+  by: file_hash_sha256
+  strategy: reingest_replace

@@ -1,0 +1,19 @@
+# Cloudflare Tunnel — Neo Chat (remote access)
+# 1. cloudflared tunnel login
+# 2. cloudflared tunnel create spark-neo-chat
+# 3. Replace TUNNEL_ID and credentials path below
+# 4. cloudflared tunnel route dns spark-neo-chat spark.kcalsion.com
+# 5. cloudflared tunnel route dns spark-neo-chat spark-api.kcalsion.com
+# 6. sudo cloudflared service install && sudo systemctl enable --now cloudflared
+#
+# Confirm hostnames with kcalsion DNS admin before routing.
+
+tunnel: TUNNEL_ID
+credentials-file: /home/lenovo/.cloudflared/TUNNEL_ID.json
+
+ingress:
+  - hostname: spark.kcalsion.com
+    service: http://127.0.0.1:3000
+  - hostname: spark-api.kcalsion.com
+    service: http://127.0.0.1:8000
+  - service: http_status:404

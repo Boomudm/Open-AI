@@ -1,0 +1,150 @@
+# Remediation blueprint v3 phase gates — used by scripts/remediation_v3_phase_gate.py
+# Audit-response blueprint (2026-06). Stub phases 1–16 until implemented.
+
+phases:
+  "0":
+    description: Constitution v3 — phase gate runner, import spine v3, constitution contract tests
+    contract_tests: true
+    pytest:
+      - tests/remediation/test_phase_gate_v3.py
+      - tests/remediation/test_constitution_v3.py
+      - tests/contracts/test_import_spine_v2.py
+      - tests/contracts/test_import_spine_v3.py
+
+  "1":
+    description: Document truth layer — layout parse, page-faithful chunks, JSON guards
+    contract_tests: true
+    pytest:
+      - tests/ingestion/test_page_faithful_chunking.py
+      - tests/ingestion/test_layout_parser_contract.py
+      - tests/ingestion/test_json_size_guard.py
+      - tests/test_ingestion_p0_failures.py
+      - tests/test_parse_chunk_quality.py
+
+  "2":
+    description: Ingest saga & idempotency — full-doc quarantine, partial unique index, staging compensation
+    contract_tests: true
+    pytest:
+      - tests/ingestion/test_quarantine_full_document.py
+      - tests/ingestion/test_idempotency_reingest_after_complete.py
+      - tests/ingestion/test_staging_abort_required.py
+      - tests/ingestion/test_safety_no_partial_swap.py
+      - tests/test_ingest_idempotency.py
+
+  "3":
+    description: Trust & adversarial defense — full-doc scan, ML all paths, severity-calibrated gate
+    contract_tests: true
+    pytest:
+      - tests/ingestion/test_trust_batch_boundary_injection.py
+      - tests/ingestion/test_trust_low_ocr_not_quarantine.py
+      - tests/ingestion/test_trust_block_goes_dlq.py
+      - tests/ingestion/test_trust_pattern_validation.py
+      - tests/ingestion/test_trust_ml_classifier_paths.py
+      - tests/test_ingest_content_policy.py
+
+  "4":
+    description: Payload contract enforcement — typed ParsedRecord, schema gate, kill harmful whitelists
+    contract_tests: true
+    pytest:
+      - tests/contracts/test_parsed_record_schema.py
+      - tests/contracts/test_parent_child_payload_required.py
+      - tests/contracts/test_rag_payload_contract.py
+      - tests/contracts/test_ingest_retrieval_payload_contract.py
+
+  "5":
+    description: Embed & sparse compute pipeline — batch encode pool, kill parse-path semantic embed
+    contract_tests: true
+    pytest:
+      - tests/ingestion/test_compute_pool_batch.py
+      - tests/ingestion/test_no_sync_sparse_on_event_loop.py
+      - tests/ingestion/test_semantic_embedding_offline_gate.py
+      - tests/contracts/test_sparse_query_document_symmetry.py
+
+  "6":
+    description: Parse & chunk consolidation v3 — SOP step chunker, stable chunk IDs
+    contract_tests: true
+    pytest:
+      - tests/ingestion/test_sop_step_chunking.py
+      - tests/ingestion/test_stable_chunk_id_reingest.py
+      - tests/ingestion/test_single_strategy_registry.py
+
+  "7":
+    description: Retrieval degraded-path rewrite — delete calibrate_scores gate bypass
+    contract_tests: true
+    pytest:
+      - tests/retrieval/test_degraded_gate_no_false_pass.py
+      - tests/retrieval/test_safety_abstain_on_ce_outage.py
+      - tests/retrieval/test_degraded_fusion_rank_gate.py
+
+  "8":
+    description: Circuit breaker isolation — per-factory/per-dependency breakers
+    contract_tests: true
+    pytest:
+      - tests/retrieval/test_circuit_factory_isolation.py
+      - tests/retrieval/test_circuit_dependency_isolation.py
+      - tests/retrieval/test_circuit_gauge_export.py
+
+  "9":
+    description: Intent & fusion intelligence — classifier, config sync CI, LTR hook
+    contract_tests: true
+    pytest:
+      - tests/retrieval/test_intent_classifier_abstain.py
+      - tests/retrieval/test_config_sync_rerank_gates.py
+      - tests/retrieval/test_loto_regex_overrides_classifier.py
+
+  "10":
+    description: Generation grounding overhaul — wire extractive_first, structured safety
+    contract_tests: true
+    pytest:
+      - tests/generation/test_extractive_first_wired_from_profile.py
+      - tests/generation/test_structured_safety_no_regex.py
+      - tests/generation/test_stream_validated_only_tokens.py
+      - tests/contracts/test_stream_sync_generation_parity.py
+
+  "11":
+    description: Request budget & stream parity — deadline propagation, session_id in stream
+    contract_tests: true
+    pytest:
+      - tests/contracts/test_rag_kernel_input_parity.py
+      - tests/retrieval/test_deadline_skips_lexical.py
+      - tests/retrieval/test_stream_session_rerank_cache.py
+      - tests/retrieval/test_follow_up_ttl_expiry.py
+
+  "12":
+    description: Observability & metrics truth — DLQ metrics, intent labels, OTel
+    contract_tests: true
+    pytest:
+      - tests/core/test_metrics_labels.py
+      - tests/core/test_ingest_dlq_metric_increment.py
+      - tests/test_confidence.py
+
+  "13":
+    description: Eval gates enforcement — production_lock_v3, outcome validation, held-out golden set
+    contract_tests: true
+    pytest:
+      - tests/scripts/test_validate_production_lock_v3_strict.py
+      - tests/ingestion/test_eval_token_signature.py
+      - tests/test_eval_gate_blocks_swap.py
+      - tests/test_production_lock_regression.py
+
+  "14":
+    description: Compliance taxonomy & WORM audit — Presidio PII, taxonomy alignment
+    contract_tests: false
+    pytest:
+      - tests/compliance/test_taxonomy_coverage.py
+      - tests/ingestion/test_presidio_pii_block.py
+      - tests/audit/test_worm_append_only.py
+      - tests/test_audit_export_rbac.py
+
+  "15":
+    description: Adversarial soak & chaos — load profile, red-team suite, nightly chaos workflow
+    contract_tests: true
+    pytest:
+      - tests/chaos/
+      - tests/scripts/test_redteam_case_count.py
+
+  "16":
+    description: Go-live cutover v3 — sparse reindex, pilot checklist, preflight v3
+    contract_tests: false
+    pytest:
+      - tests/contracts/test_go_live_cutover_v3_contract.py

@@ -1,0 +1,71 @@
+# App-layer remediation phase gates (see remediation_blueprint_app_layer/)
+
+phases:
+  "0":
+    description: Constitution — AppProfile, error envelope, trust contract scaffold
+    pytest:
+      - tests/app_layer/test_app_profile_production.py
+      - tests/app_layer/contracts/test_error_envelope.py
+  "1":
+    description: API platform middleware — rate limit, timeout, request ID, security headers
+    pytest:
+      - tests/app_layer/test_middleware_stack.py
+  "2":
+    description: Auth hardening — fail-closed, login lockout, stream tickets
+    pytest:
+      - tests/app_layer/test_auth_fail_closed.py
+      - tests/app_layer/test_stream_tickets.py
+      - tests/app_layer/test_login_lockout.py
+  "3":
+    description: SSE architecture — DB decoupling, Redis pub/sub streams
+    pytest:
+      - tests/app_layer/test_sse_no_session_leak.py
+      - tests/app_layer/test_alert_redis_stream.py
+      - tests/app_layer/test_stream_disconnect.py
+  "4":
+    description: ACL cache and admin query batching
+    pytest:
+      - tests/app_layer/test_acl_cache.py
+      - tests/app_layer/test_admin_list_queries.py
+      - tests/app_layer/test_alerts_batch_ack.py
+  "5":
+    description: Streaming pipeline — live tokens default, stream/sync parity
+    pytest:
+      - tests/app_layer/test_stream_sync_trust_parity.py
+  "6":
+    description: Frontend transport and auth client
+    web:
+      - npm run test
+  "7":
+    description: Operator trust and safety UX
+    web:
+      - npm run test
+    pytest:
+      - tests/app_layer/contracts/test_frontend_trust_mapping.py
+  "8":
+    description: Real-time and connectivity resilience
+    web:
+      - npm run test
+  "9":
+    description: Offline and industrial resilience
+    web:
+      - npm run test
+  "10":
+    description: Frontend performance and error boundaries
+    web:
+      - npm run test
+  "11":
+    description: Edge deployment and multi-worker hardening
+    pytest:
+      - tests/app_layer/test_redis_required_startup.py
+  "12":
+    description: Contract tests and release gates — full app_layer suite
+    pytest:
+      - tests/app_layer/
+    web:
+      - npm run test
+      - npx tsc --noEmit
+  "13":
+    description: Legacy teardown and cutover
+    scripts:
+      - scripts/app_layer/banned_patterns.sh

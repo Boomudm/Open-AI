@@ -1,0 +1,9 @@
+# Phase 3 — ingest adversarial trust defense (pytest-driven; metadata for phase gates)
+description: Full-document trust scan, severity-calibrated gate, ML classifier paths, block→DLQ
+pytest:
+  - tests/ingestion/test_trust_batch_boundary_injection.py
+  - tests/ingestion/test_trust_low_ocr_not_quarantine.py
+  - tests/ingestion/test_trust_block_goes_dlq.py
+  - tests/ingestion/test_trust_pattern_validation.py
+  - tests/ingestion/test_trust_ml_classifier_paths.py
+  - tests/test_ingest_content_policy.py

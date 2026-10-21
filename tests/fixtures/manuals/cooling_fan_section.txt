@@ -1,0 +1,10 @@
+# Cooling system section — golden chunk boundary fixture (Phase 6)
+# Section: Cooling System > Fan Inspection
+
+## Cooling System
+
+### Fan Inspection
+
+Inspect cooling fans every 5000 operating hours.
+Replace bearing SKF-6205 when noise exceeds 70 dB.
+Verify airflow direction matches the arrow on the housing.

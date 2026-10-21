@@ -1,0 +1,5 @@
+# Phase 11 — vector consistency ops (stub)
+phase: 11
+description: Drift auto-heal, embed migration runbook
+contract_tests: true
+eval_subset: null

@@ -1,0 +1,14 @@
+default_th:
+  provider: sentence_transformers
+  model: BAAI/bge-m3
+  expected_dim: 1024
+
+bge_m3:
+  provider: sentence_transformers
+  model: BAAI/bge-m3
+  expected_dim: 1024
+
+production_gpu:
+  provider: vllm
+  model: BAAI/bge-m3
+  expected_dim: 1024

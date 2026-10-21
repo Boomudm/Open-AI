@@ -1,0 +1,104 @@
+# Factory production overlay — Neo Chat app services + optional sidecars
+#
+# Usage:
+#   docker compose \
+#     -f docker-compose.yml \
+#     -f docker-compose.prod.yml \
+#     -f docker-compose.mcp.yml \
+#     -f docker-compose.factory.yml \
+#     up -d
+#
+# Set in .env:
+#   APP_ENV=production
+#   AUTH_REQUIRED=true
+#   LLM_PROFILE=prod
+#   PREDICTIVE_BACKEND=hybrid
+#   INGEST_BACKEND=native
+#   JWT_SECRET=<rotate-me>
+#   CORS_ORIGINS=http://localhost:3000
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: spark_api
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_URL: redis://redis:6379/0
+      QDRANT_HOST: qdrant
+      PREDICTIVE_BACKEND: hybrid
+      INGEST_BACKEND: ${INGEST_BACKEND:-native}
+      # MCP predictive sidecar — hybrid falls back to heuristic when unreachable
+      MCP_PREDICTIVE_URL: http://predictive_mcp:8100/mcp
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data/agentic:/app/data/agentic
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: spark_celery
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_URL: redis://redis:6379/0
+      QDRANT_HOST: qdrant
+      INGEST_BACKEND: ${INGEST_BACKEND:-native}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: spark_celery_beat
+    env_file: .env
+    environment:
+      POSTGRES_HOST: postgres
+      REDIS_URL: redis://redis:6379/0
+    command:
+      - celery
+      - -A
+      - spark.workers.celery_app
+      - beat
+      - --loglevel=info
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: spark_web
+    env_file: .env
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      NODE_ENV: production
+      NEXT_PUBLIC_SPARK_API_URL: ${NEXT_PUBLIC_SPARK_API_URL:-http://localhost:8000}
+      NEXT_PUBLIC_PASSWORD_LOGIN: ${NEXT_PUBLIC_PASSWORD_LOGIN:-false}
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy

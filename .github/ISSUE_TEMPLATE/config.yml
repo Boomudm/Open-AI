@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation index
+    url: https://github.com/CPF-Chula-CEDT-2026/spark/blob/develop/docs/README.md
+    about: Operator guides, architecture, and deployment docs
+  - name: On-prem deployment kit
+    url: https://github.com/CPF-Chula-CEDT-2026/spark/blob/develop/deploy/README-ONPREM.md
+    about: Factory LAN Docker deployment guide
+  - name: Security vulnerability
+    url: https://github.com/CPF-Chula-CEDT-2026/spark/security/advisories/new
+    about: Report privately — do not use public issues for security bugs

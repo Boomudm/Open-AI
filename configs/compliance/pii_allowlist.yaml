@@ -1,0 +1,22 @@
+# Factory-specific PII allowlists — reduce false positives on maintenance identifiers (Phase 14).
+
+version: 1
+
+global:
+  patterns:
+    - id: employee_badge
+      regex: '\bEMP-\d{4,8}\b'
+      entity_types: [PERSON, US_DRIVER_LICENSE]
+    - id: machine_operator_code
+      regex: '\bOP-[A-Z0-9]{3,12}\b'
+      entity_types: [PERSON]
+    - id: work_order_ref
+      regex: '\bWO-\d{6,10}\b'
+      entity_types: [US_DRIVER_LICENSE, ID]
+
+factories:
+  F-01:
+    patterns:
+      - id: f01_staff_id
+        regex: '\bF01-\d{5}\b'
+        entity_types: [PERSON, US_DRIVER_LICENSE]
